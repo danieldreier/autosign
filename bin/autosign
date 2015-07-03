@@ -1,0 +1,99 @@
+#!/usr/bin/env ruby
+require 'gli'
+require 'autosign'
+require 'socket' # for determining the current hostname
+include GLI::App
+
+program_desc 'Easy Puppet Certificate Autosigning'
+
+version Autosign::VERSION
+
+subcommand_option_handling :normal
+arguments :strict
+
+#desc 'Describe some switch here'
+#switch [:s,:switch]
+
+desc 'Configuration file location'
+default_value '/etc/autosign.yaml'
+arg_name 'path'
+flag [:c,:config]
+
+desc 'secret symmetric key'
+arg_name 'secret'
+flag [:s,:secret]
+
+desc 'Generate an autosign token'
+arg_name 'certname or regex the autosign token will be valid for'
+command :generate do |c|
+  c.desc 'Generate a reusable token; default is to generate one-time tokens'
+
+  c.switch [:r, :reusable]
+  c.desc 'certname or regex of certnames the autosign token will be valid for'
+  c.default_value 'default'
+  c.arg_name 'certname'
+  c.flag [:n,:certname]
+
+  c.desc 'autosign token validity period'
+  c.default_value '7200'
+  c.arg_name 'seconds'
+  c.flag [:t,:validfor]
+
+  c.action do |global_options,options,args|
+    token = Autosign::Token.new(options['certname'].to_s, options['reusable'], options['validfor'].to_i, Socket.gethostname.to_s, "secret")
+    puts "Autosign token for: " + token.certname
+    puts "Valid until: " + Time.at(token.validto).to_s
+    puts ""
+    puts token.sign.to_s
+    puts ""
+  end
+end
+
+desc 'Validate a previously issued token'
+arg_name 'path'
+command :validate do |c|
+  c.desc 'display the contents of the token'
+  c.switch [:p, :print]
+
+  c.action do |global_options,options,args|
+    puts "validate command ran with #{global_options} #{options} #{args}"
+  end
+end
+
+desc 'Configure a puppet server for autosigning'
+command :setup do |c|
+  c.action do |global_options,options,args|
+    puts "setup command ran with #{global_options} #{options} #{args}"
+  end
+end
+
+desc 'Install an autosign token; run this prior to running puppet for the first time on an agent'
+arg_name 'token'
+command :use do |c|
+  c.action do |global_options,options,args|
+    puts "use command ran with #{global_options} #{options} #{args}"
+  end
+end
+
+pre do |global,command,options,args|
+  # Pre logic here
+  # Return true to proceed; false to abort and not call the
+  # chosen command
+  # Use skips_pre before a command to skip this block
+  # on that command only
+  true
+end
+
+post do |global,command,options,args|
+  # Post logic here
+  # Use skips_post before a command to skip this
+  # block on that command only
+end
+
+on_error do |exception|
+  # Error logic here
+  # return false to skip default error handling
+  true
+end
+
+exit run(ARGV)
