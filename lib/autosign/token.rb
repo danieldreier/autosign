@@ -35,12 +35,9 @@ module Autosign
       return "validation failed with: #{errors.join(', ')}" unless errors.count == 0
       certname_is_regex = (data["certname"] =~ /\/[^\/].*\//) ? true : false
 
-
-
       if certname_is_regex
         regexp = Regexp.new(/\/([^\/].*)\//.match(data["certname"])[1])
         unless regexp.match(requested_certname)
-#        unless regexp.match requested_certname.to_s
           errors << "certname: '#{requested_certname}' does not match validation regex: '#{regexp.to_s}'"
         end
       else
@@ -78,11 +75,10 @@ module Autosign
     end
 
     def validfor=(str)
-      @name = str
+      @validfor = str
     end
 
-    def validto=(str)
-      @validfor = str.to_i
+    def validto()
       @validto = Time.now.to_i + self.validfor
     end
 
