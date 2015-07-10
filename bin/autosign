@@ -130,8 +130,8 @@ command :use do |c|
 #    puts puppet_confdir
     @logger.debug "use command ran with #{global_options} #{options} #{args}"
     puts "put the following in #{puppet_confdir}/csr_attributes.yaml prior to running puppet agent for the first time:
-      custom_attributes:
-          challengePassword: \"#{args[0]}\""
+custom_attributes:
+  challengePassword: \"#{args[0]}\""
   end
 end
 
