@@ -54,13 +54,17 @@ command :generate do |c|
   c.flag [:t,:validfor]
 
   c.action do |global_options,options,args|
-    config = Autosign::Config.new
+    config = Autosign::Config.new(global_options['config'])
     global_options['secret'] = config.settings['jwt_token']['secret'] if global_options['secret'].nil?
     options['validfor'] = config.settings.to_hash['jwt_token']['validity'].to_s if options['validfor'] == '7200'
     @logger.debug "validfor: " + options['validfor']
     help_now!('no secret was defined via --secret or a config file') if global_options['secret'].nil?
     help_now!('certname is required') if options['certname'].nil?
-    help_now!('validfor setting must be an positive integer number of seconds') if !/\A\d+\z/.match(options['validfor'])
+
+    puts "settings: " + config.settings.to_hash['jwt_token'].to_s
+    puts "validfor: " + options['validfor']
+
+    help_now!('validfor setting must be an positive integer number of seconds') if !/\A\d+\z/.match(options['validfor'].to_s)
     token = Autosign::Token.new(options['certname'].to_s, options['reusable'], options['validfor'].to_i, Socket.gethostname.to_s, global_options['secret'])
     @logger.info "generated token for: " + options['certname'].to_s
     puts "Autosign token for: " + token.certname
@@ -80,7 +84,7 @@ command :validate do |c|
   c.flag [:n,:certname]
 
   c.action do |global_options,options,args|
-    config = Autosign::Config.new
+    config = Autosign::Config.new(global_options['config'])
     puts config.settings.to_hash['jwt_token']
     global_options['secret'] = config.settings['jwt_token']['secret'] if global_options['secret'].nil?
 
@@ -115,7 +119,7 @@ command :config do |c|
   c.command :print do |print|
     print.action do |global_options,options,args|
       @logger.debug "print command ran with #{global_options} #{options} #{args}"
-      config = Autosign::Config.new
+      config = Autosign::Config.new(global_options['config'])
       puts config.settings.to_s
     end
   end

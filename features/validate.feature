@@ -10,11 +10,11 @@ Feature: Validate autosign key
       | AUTOSIGN_TEST_SECRET   | secret |
       | AUTOSIGN_TEST_LOGLEVEL | info   |
     When I run `autosign-validator i-7672fe81` interactively
-    And I pipe in the file "../../fixtures/i-7672fe81.pem"
+     And I pipe in the file "../../fixtures/i-7672fe81.pem"
     Then the output should contain "token validated successfully"
     Then the exit status should be 0
 
   Scenario: Do not validate a certificate signing request whose certname does not match the certificate
     When I run `autosign-validator wrong-certname.example.com` interactively
-    And I pipe in the file "../../fixtures/i-7672fe81.pem"
+     And I pipe in the file "../../fixtures/i-7672fe81.pem"
     Then the exit status should be 1
