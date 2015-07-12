@@ -64,6 +64,8 @@ module Autosign
           parsed_config_file = IniParse.parse(config_file).to_hash
           @log.debug "configuration read from config file: " + parsed_config_file.to_s
           return parsed_config_file if parsed_config_file.is_a?(Hash)
+        else
+          @log.debug "Configuration file '#{file}' not found"
         end
       }
       return {}

@@ -6,35 +6,7 @@ require 'logging'
 @logger.level = :debug
 @logger.add_appenders Logging.appenders.stdout
 
-# this terrible hack is in place to make it easier to test
-if (ENV["AUTOSIGN_TESTMODE"] == "true" and !ENV["AUTOSIGN_TEST_SECRET"].nil? and !ENV["AUTOSIGN_TEST_LOGLEVEL"].nil? )
-  config = { 'general' => {
-               'loglevel' => ENV["AUTOSIGN_TEST_LOGLEVEL"].to_s
-               },
-             'jwt_token' =>
-               { 'secret' => ENV["AUTOSIGN_TEST_SECRET"].to_s }
-           }
-else
-  config = Autosign::Config.new.settings.to_hash
-end
-
-
-if config['general']['loglevel'].nil?
-  @logger.debug "unable to read log level from config file, defaulting to debug"
-else
-  @logger.level = config['general']['loglevel'].to_s.to_sym
-end
-
-unless config['general']['logfile'].nil?
-  logfile = config['general']['logfile']
-  @logger.debug "logging to logfile: " + logfile
-#  @logger.add_appenders Logging.appenders.file(logfile)
-else
-  @logger.debug "no log file specified in config file, logging to console only"
-end
-
-
-
+### Get Inputs
 unless ARGV.count == 1
   @logger.error "This executable must be called with a certname as the only parameter and with an X509 CSR piped into STDIN"
   exit 1
@@ -44,25 +16,17 @@ certname = ARGV[0]
 @logger.debug "certname is " + certname
 
 @logger.debug "reading CSR from stdin"
-csr = OpenSSL::X509::Request.new($stdin.read)
+csr = Autosign::Decoder.decode_csr($stdin.read)
+exit 1 unless csr.is_a?(Hash)
+
 @logger.debug "CSR: " + csr.to_s
+### End Inputs
 
-key =  csr.attributes.select { |a| a.oid == 'challengePassword' }.first.value.value.first.value
-@logger.debug "key: " + key
+### validate token
+token_validation = Autosign::Validator.any_validator(csr[:challenge_password].to_s, certname.to_s)
+### end validation
 
-unless (config['jwt_token']['secret'].is_a?(String) and config['jwt_token']['secret'].length > 0)
-  @logger.error "Cannot read JWT secret from config file"
-  exit 1
-end
-
-secret = config['jwt_token']['secret']
-@logger.debug "secret: " + secret
-
-token_validation = Autosign::Token.validate(certname.to_s, key, secret)
-token = Autosign::Token.from_token(key, secret).to_hash
-
-puts token
-
+### Exit with correct exit status
 if token_validation == true
   @logger.info "token validated successfully"
   exit 0
@@ -71,5 +35,7 @@ else
   @logger.error "Unable to validate token"
   exit 1
 end
+### Done exiting
 
+# end with an exit 1 just in case
 exit 1
