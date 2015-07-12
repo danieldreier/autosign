@@ -61,7 +61,7 @@ module Autosign
     # This will only succeed if the token has not previously been added
     # This is the primary way this class is expected to be used
     def add(uuid, validto, data = {})
-      @log.debug "attempting to add UUID: '#{uuid.to_s}' which is valid to '#{validto}' with data #{data.to_s}"
+      @log.debug "attempting to add UUID: '#{uuid.to_s}' which is valid to '#{Time.at(validto.to_i)}' with data #{data.to_s}"
       puts validate_uuid(uuid).to_s
       #fail unless validate_uuid(uuid)
       #fail unless validate_timestamp(validto)

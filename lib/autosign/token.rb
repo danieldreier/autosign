@@ -9,8 +9,8 @@ module Autosign
     attr_reader :reusable
     attr_reader :requester
     attr_reader :secret
-    attr_reader :validto
-    attr_reader :uuid
+    attr_accessor :validto
+    attr_accessor :uuid
 
     def initialize(certname, reusable=false, validfor=7200, requester, secret)
       # set up logging
@@ -69,6 +69,17 @@ module Autosign
       raise Autosign::Token::ValidationError
     end
 
+    def self.token_validto(token, hmac_secret)
+      begin
+        decoded = JWT.decode(token, hmac_secret)[0]
+      rescue JWT::ExpiredSignature
+        raise Autosign::Token::ExpiredToken
+      rescue
+        raise Autosign::Token::Invalid
+      end
+      return decoded['exp'].to_i
+    end
+
     def self.from_token(token, hmac_secret)
       begin
         decoded = JWT.decode(token, hmac_secret)[0]
@@ -82,31 +93,31 @@ module Autosign
       reusable  = JSON.parse(decoded["data"])["reusable"]
       validfor  = JSON.parse(decoded["data"])["validfor"]
 
-      self.new(certname, reusable, validfor, requester, hmac_secret)
-    end
+      new_token = self.new(certname, reusable, validfor, requester, hmac_secret)
+      new_token.validto = self.token_validto(token, hmac_secret)
+      new_token.uuid = JSON.parse(decoded["data"])["uuid"]
 
-    def validfor=(str)
-      @validfor = str
-    end
-
-    def validto()
-      @validto = Time.now.to_i + self.validfor
+      return new_token
     end
 
     def certname=(str)
       @name = str
     end
 
-    def reusable=(str)
-      @reusable
+    def reusable=(bool)
+      @reusable = !!bool
+    end
+
+    def reusable
+      !!@reusable
     end
 
     def requester=(str)
-      @requester
+      @requester = str
     end
 
     def secret=(str)
-      @secret
+      @secret = str
     end
 
     def to_hash
