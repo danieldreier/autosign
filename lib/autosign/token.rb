@@ -13,6 +13,10 @@ module Autosign
     attr_reader :uuid
 
     def initialize(certname, reusable=false, validfor=7200, requester, secret)
+      # set up logging
+      @log = Logging.logger['Autosign::Token']
+      @log.debug "initializing"
+
       @validfor  = validfor
       @certname  = certname
       @reusable  = reusable
@@ -20,22 +24,28 @@ module Autosign
       @secret    = secret
       @uuid      = SecureRandom.uuid # UUID is needed to allow token regeneration with the same settings
       @validto   = Time.now.to_i + self.validfor
-      self.create(validfor, secret)
     end
 
     def self.validate(requested_certname, token, hmac_secret)
+      @log = Logging.logger['Autosign::Token.validate']
+      @log.debug "attempting to validate token"
+      @log.info "attempting to validate token for: #{requested_certname.to_s}"
       errors = []
       begin
+        @log.debug "Decoding and parsing token"
         data = JSON.parse(JWT.decode(token, hmac_secret)[0]["data"])
       rescue JWT::ExpiredSignature
+        @log.warn "Token has an expired signature"
         errors << "Expired Signature"
       rescue
+        @log.warn "Unable to validate token successfully"
         errors << "Invalid Token"
       end
-      return "validation failed with: #{errors.join(', ')}" unless errors.count == 0
+      @log.warn "validation failed with: #{errors.join(', ')}" unless errors.count == 0
       certname_is_regex = (data["certname"] =~ /\/[^\/].*\//) ? true : false
 
       if certname_is_regex
+        @log.debug "validating certname as regular expression"
         regexp = Regexp.new(/\/([^\/].*)\//.match(data["certname"])[1])
         unless regexp.match(requested_certname)
           errors << "certname: '#{requested_certname}' does not match validation regex: '#{regexp.to_s}'"
@@ -47,13 +57,15 @@ module Autosign
       end
 
       unless errors.count == 0
-        puts "validation failed with: #{errors.join(', ')}"
+        @log.warn "validation failed with: #{errors.join(', ')}"
         return false
       else
+        @log.info "validated token successfully"
         return true
       end
 
       # we should never get here, but if we do we should break instead of returning anything
+      @log.error "unexpectedly reached end of validation method"
       raise Autosign::Token::ValidationError
     end
 
@@ -69,7 +81,6 @@ module Autosign
       requester = JSON.parse(decoded["data"])["requester"]
       reusable  = JSON.parse(decoded["data"])["reusable"]
       validfor  = JSON.parse(decoded["data"])["validfor"]
-      validto   = Time.now.to_i + validfor
 
       self.new(certname, reusable, validfor, requester, hmac_secret)
     end
@@ -110,10 +121,6 @@ module Autosign
 
     def to_json
       JSON.generate self.to_hash
-    end
-
-    def create(validfor, secret)
-#      self.sign(self.to_hash, validfor, secret)
     end
 
     def sign()

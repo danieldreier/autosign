@@ -56,8 +56,7 @@ Feature: Generate autosign key
       """
     When I run `chmod 600 autosign.conf`
     When I run `autosign --config autosign.conf validate --certname "foo.example.com" "invalid_token"`
-    Then the output should contain "Unable to validate token"
-     And the exit status should be 1
+    Then the exit status should be 1
 
   Scenario: Not validate an expired token
     Given a pre-shared key of "secret"
@@ -69,8 +68,7 @@ Feature: Generate autosign key
       """
     When I run `chmod 600 autosign.conf`
     When I run `autosign --config autosign.conf validate --certname "foo.example.com" "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJkYXRhIjoie1wiY2VydG5hbWVcIjpcImZvby5leGFtcGxlLmNvbVwiLFwicmVxdWVzdGVyXCI6XCJEYW5pZWxzLU1hY0Jvb2stUHJvLTIubG9jYWxcIixcInJldXNhYmxlXCI6ZmFsc2UsXCJ2YWxpZGZvclwiOjEsXCJ1dWlkXCI6XCJlNjI1Y2I1Ny02NzY5LTQwMzQtODNiZS0zNzkxNmQ5YmMxMDRcIn0iLCJleHAiOiIxNDM2NDY2MzAyIn0.UXEDEbRqEWx5SdSpQjfowU56JubY5Yz2QN6cckby2es-g2P_n2lyAS6AwFeliBXyCDyVUelIT3g1QP4TdB9EEA"`
-    Then the output should contain "Unable to validate token"
-     And the exit status should be 1
+    Then the exit status should be 1
 
   Scenario: Generate a csr_attributes.yaml file
     When I run `autosign use hunter2`
