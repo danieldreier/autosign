@@ -5,7 +5,6 @@ require 'socket' # for determining the current hostname
 include GLI::App
 require 'logging'
 
-@logger = Logging.logger['autosign_cli_logger']
 @logger = Logging.logger['Autosign']
 @logger.level = :warn
 
