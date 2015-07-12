@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Puppet Autosign by danieldreier</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Puppet Autosign</h1>
+        <p>Tooling to make puppet autosigning easy, secure, and extensible</p>
+
+        <p class="view"><a href="https://github.com/danieldreier/autosign">View the Project on GitHub <small>danieldreier/autosign</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/danieldreier/autosign/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/danieldreier/autosign/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/danieldreier/autosign">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h3>
+<a id="still-in-development" class="anchor" href="#still-in-development" aria-hidden="true"><span class="octicon octicon-link"></span></a>Still in development</h3>
+
+<p>This tool is under active development. I do not recommend production use until this notice is removed.</p>
+
+<h3>
+<a id="puppet-autosign-tool" class="anchor" href="#puppet-autosign-tool" aria-hidden="true"><span class="octicon octicon-link"></span></a>Puppet Autosign Tool</h3>
+
+<p>This gem makes it easier to use Puppet's <a href="https://docs.puppetlabs.com/puppet/latest/reference/ssl_autosign.html#policy-based-autosigning">policy-based autosigning</a> for client certificates.</p>
+
+<ul>
+<li>Generate time-limited, reusable or one-time tokens</li>
+<li>CLI tooling</li>
+<li>Extensive logging</li>
+</ul>
+
+<h3>
+<a id="background" class="anchor" href="#background" aria-hidden="true"><span class="octicon octicon-link"></span></a>Background</h3>
+
+<p><a href="https://puppetlabs.com/puppet/what-is-puppet">Puppet</a> requires that agent SSL certificates be signed by the master's certificate authority. This can be performed manually using the <code>puppet cert sign</code> command on the master or using the Puppet Enterprise web console, automatically in an <a href="https://docs.puppetlabs.com/puppet/latest/reference/ssl_autosign.html#security-implications-of-nave-autosigning">insecure way using naive autosigning</a>, or automatically and (potentially) more securely using <a href="https://docs.puppetlabs.com/puppet/latest/reference/ssl_autosign.html#policy-based-autosigning">policy-based autosigning</a>. </p>
+
+<p>Policy-based autosigning calls an external executable and passes it the certificate signing request to STDIN and the agent's certificate name as the sole parameter. No default policy autosign executable is provided, so people write their own. Many are available publicly:</p>
+
+<ul>
+<li>Chris Barker's <a href="https://github.com/mrzarquon/mrzarquon-certsigner">AWS autosign script</a>
+</li>
+<li>David Lutterkort's <a href="http://watzmann.net/blog/2014/06/puppet-autosign-policy.html">pre-shared key script</a>
+</li>
+<li>
+<a href="http://techs.enovance.com/7221/policy-based-autosigning-a-step-towards-more-secure-deployments-with-puppet">Enovance's example</a> for requiring specific attributes (e.g. trusted facts) in a policy executable</li>
+</ul>
+
+<p>Each of these are written as one-off scripts, solving a specific need.</p>
+
+<p>Many existing autosign scripts are based on validating one or more static strings (e.g. passwords, API keys, etc). If an attacker can obtain that string, they can issue valid requests to the Puppet Master, potentially allowing them to impersonate secure infrastructure and escalate privileges. People frequently forget to delete the <code>csr_attributes.yaml</code> after generating a CSR, and as with any plain-text password the tendency is for the keys to be widely distributed.</p>
+
+<p>This tool can generate time limited, one-time tokens that are only valid for a specific host, so that obtaining the token after provisioning is not useful to an attacker.</p>
+
+<h3>
+<a id="functionality" class="anchor" href="#functionality" aria-hidden="true"><span class="octicon octicon-link"></span></a>Functionality</h3>
+
+<p>This gem provides functionality in three areas. A <a href="http://jwt.io/">JWT</a>-based token system for securely issuing autosign tokens, a pluggable architecture for creating new autosign validation tools, and a CLI for managing autosign tokens.</p>
+
+<h3>
+<a id="planned-functionality" class="anchor" href="#planned-functionality" aria-hidden="true"><span class="octicon octicon-link"></span></a>Planned Functionality</h3>
+
+<p>This gem intends to (but does not yet) provide:</p>
+
+<ul>
+<li>Multiplexing, allowing one or more existing autosign policy executables to be run as validators</li>
+<li>Simple policy rules, allowing multiple policies to be combined. At the moment, if any one validator passes, the CSR is signed. In the future, we intend to provide the ability to require that all pass, and ideally provide more complex rules.</li>
+</ul>
+
+<h3>
+<a id="security-model-for-jwt-tokens" class="anchor" href="#security-model-for-jwt-tokens" aria-hidden="true"><span class="octicon octicon-link"></span></a>Security Model for JWT Tokens</h3>
+
+<p>The goal of the JWT tokens is to place time, reusability, and commonName constraints on tokens. There are several expected use models:</p>
+
+<h4>
+<a id="per-host-tokens-for-automated-provisioning" class="anchor" href="#per-host-tokens-for-automated-provisioning" aria-hidden="true"><span class="octicon octicon-link"></span></a>Per-host tokens for automated provisioning</h4>
+
+<p>During automated provisioning, a new token can be generated for each provisioned host. They will only be usable once, and will expire after a time period (2 hours by default).</p>
+
+<h3>
+<a id="time-limited-delegation-of-signing-ability" class="anchor" href="#time-limited-delegation-of-signing-ability" aria-hidden="true"><span class="octicon octicon-link"></span></a>Time-limited delegation of signing ability</h3>
+
+<p>You can generate a wildcard token that is only valid for hours or days, then share it with another person who needs to provision systems. Use of the token will be logged, so if you generate individual tokens for different users it's possible to audit who authorized which certificates to be signed. After the time period expires, they will no longer be able to authorize more hosts, but the previously-authorized hosts continue to work.</p>
+
+<h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+
+<p><a href="https://github.com/danieldreier" class="user-mention">@danieldreier</a> is the primary author and maintainer of this gem. I would greatly appreciate additional contributions.</p>
+
+<h3>
+<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+
+<p>Having trouble with Pages? Check out our <a href="https://help.github.com/pages">documentation</a> or <a href="https://github.com/contact">contact support</a> and we’ll help you sort it out.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/danieldreier">danieldreier</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-65052442-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
