@@ -12,63 +12,33 @@ module Autosign
     require 'iniparse'
     require 'rbconfig'
     require 'securerandom'
+    require 'deep_merge'
   class Config
     attr_accessor :location
-    def initialize(config_file = nil, settings = {})
-      if config_file == nil
-        @location = self.class.default_config_file ? self.class.default_config_file : :none
-      else
-        @location = validate_config_file(config_file) ? config_file : :none
-      end
+    attr_accessor :config_file_paths
+    def initialize(settings = {})
+      # set up logging
+      @log = Logging.logger['Autosign::Config']
+      @log.debug "initializing Autosign::Config"
 
-      @settings = self.default_settings.merge(self.read_configfile).merge(settings)
-    end
+      # validate parameter
+      raise 'settings is not a hash' unless settings.is_a?(Hash)
 
-    def self.generate_default()
+      # look in the following places for a config file
+      @config_file_paths = ['/etc/autosign.conf', '/usr/local/etc/autosign.conf', File.join(Dir.home, '.autosign.conf')]
+      @config_file_paths = [ settings['config_file'] ] unless settings['config_file'].nil?
 
-      os_defaults = (
-        case RbConfig::CONFIG['host_os']
-        when /darwin|mac os/
-          {
-            'logpath'  => File.join(Dir.home, 'autosign.log'),
-            'confpath' => File.join(Dir.home, '.autosign.conf'),
-          }
-        when /linux/
-          {
-            'logpath'  => '/var/log/autosign.log',
-            'confpath' => '/etc/autosign.conf'
-          }
-        when /bsd/
-          {
-            'logpath'  => '/var/log/autosign.log',
-            'confpath' => '/usr/local/etc/autosign.conf'
-          }
-        else
-          raise Autosign::Exceptions::Error, "unsupported os: #{host_os.inspect}"
-        end
-      )
-
-      config = IniParse.gen do |doc|
-        doc.section("general",
-          :comment => "general autosign tool settings"
-        ) do |general|
-          general.option("loglevel", "warn", :comment => "options are error, warn, info, and debug in increasing order of verbosity")
-          general.option("logfile", os_defaults['logpath'], :comment => 'note that log rotation is not configured by default')
-        end
-        doc.section("jwt_token",
-          :comment => "token-based auth settings"
-        ) do |jwt_token|
-          jwt_token.option("secret", SecureRandom.base64(15), :comment => "secret must be set the same on all systems using token-based auth")
-          jwt_token.option("validity", 7200, :comment => "number of seconds a token will be valid for")
-        end
-      end.to_ini
-      raise Autosign::Exceptions::Error, "file #{os_defaults['confpath']} already exists, aborting" if File.file?(os_defaults['confpath'])
-      File.write(os_defaults['confpath'], config)
+      @settings = settings
+      @log.debug "Using merged settings hash: " + @settings.to_s
     end
 
     def settings
-      @settings
+      @log.debug "merging settings"
+      setting_sources = [default_settings, configfile, @settings]
+      setting_sources.inject({}) { |merged, hash| merged.deep_merge(hash) }
     end
+
+    private
 
     def default_settings
       { 'general' =>
@@ -76,6 +46,7 @@ module Autosign
           'loglevel'       => 'INFO',
           'token_validity' => 7200,
           'logfile'        => '/var/log/autosign.log',
+          'journalfile'    => '/var/log/autosign.journal',
         },
         'jwt_token' => {
           'validity' => 7200
@@ -83,47 +54,76 @@ module Autosign
       }
     end
 
-    def read_configfile(file = self.location)
-      if self.location
-        return IniParse.parse( File.read(self.location)).to_hash
-      else
-        return {}
-      end
+    def configfile
+      @log.debug "Finding config file"
+      @config_file_paths.each { |file|
+        @log.debug "Checking if file '#{file}' exists"
+        if File.file?(file)
+          @log.debug "Reading config file from: " + file
+          config_file = File.read(file)
+          parsed_config_file = IniParse.parse(config_file).to_hash
+          @log.debug "configuration read from config file: " + parsed_config_file.to_s
+          return parsed_config_file if parsed_config_file.is_a?(Hash)
+        end
+      }
+      return {}
     end
 
-    def validate_config_file(configfile = self.location)
+    def validate_config_file(configfile = location)
+      @log.debug "validating config file"
       unless File.file?(configfile)
-        STDERR.puts "configuration file not found at: #{configfile}"
+        @log.error "configuration file not found at: #{configfile}"
         raise Autosign::Exceptions::NotFound
       end
 
       # check if file is world-readable
       if File.world_readable?(configfile) or File.world_writable?(configfile)
-        STDERR.puts "configuration file #{configfile} is world-readable or world-writable, which is a security risk"
+        @log.error "configuration file #{configfile} is world-readable or world-writable, which is a security risk"
         raise Autosign::Exceptions::Permissions
       end
 
-      read_configfile
+      configfile
     end
 
-    def self.default_config_file_list
-      ['/etc/autosign.conf', '/usr/local/etc/autosign.conf', File.join(Dir.home, '.autosign.conf')]
+    def self.generate_default()
+      os_defaults = (
+        case RbConfig::CONFIG['host_os']
+        when /darwin|mac os/
+          {
+            'logpath'     => File.join(Dir.home, 'autosign.log'),
+            'confpath'    => File.join(Dir.home, '.autosign.conf'),
+            'journalfile' => File.join(Dir.home, '.autosign.journal')
+          }
+        when /linux/
+          {
+            'logpath'     => '/var/log/autosign.log',
+            'confpath'    => '/etc/autosign.conf',
+            'journalfile' => File.join(Dir.home, '/var/log/autosign.journal')
+          }
+        when /bsd/
+          {
+            'logpath'     => '/var/log/autosign.log',
+            'confpath'    => '/usr/local/etc/autosign.conf',
+            'journalfile' => File.join(Dir.home, '/var/log/autosign.journal')
+          }
+        else
+          raise Autosign::Exceptions::Error, "unsupported os: #{host_os.inspect}"
+        end
+      )
+
+      config = IniParse.gen do |doc|
+        doc.section("general") do |general|
+          general.option("loglevel", "warn")
+          general.option("logfile", os_defaults['logpath'])
+          general.option("journalfile", os_defaults['journalfile'])
+        end
+        doc.section("jwt_token") do |jwt_token|
+          jwt_token.option("secret", SecureRandom.base64(15))
+          jwt_token.option("validity", 7200)
+        end
+      end.to_ini
+      raise Autosign::Exceptions::Error, "file #{os_defaults['confpath']} already exists, aborting" if File.file?(os_defaults['confpath'])
+      File.write(os_defaults['confpath'], config)
     end
-
-    def self.default_config_file
-      default_config_file = false
-      default_locations = self.default_config_file_list
-
-      default_locations.each do |path|
-        default_config_file = path if File.file?(path)
-      end
-      if default_config_file.is_a?(String)
-        return default_config_file
-      else
-        STDERR.puts "unable to locate configuration file in #{default_locations.join(', ')}"
-        return default_config_file
-      end
-    end
-
   end
 end

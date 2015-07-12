@@ -2,8 +2,9 @@
 require 'autosign'
 require 'logging'
 
-@logger = Logging.logger['autosign_validator_logger']
+@logger = Logging.logger['Autosign']
 @logger.level = :debug
+@logger.add_appenders Logging.appenders.stdout
 
 # this terrible hack is in place to make it easier to test
 if (ENV["AUTOSIGN_TESTMODE"] == "true" and !ENV["AUTOSIGN_TEST_SECRET"].nil? and !ENV["AUTOSIGN_TEST_LOGLEVEL"].nil? )
@@ -17,7 +18,6 @@ else
   config = Autosign::Config.new.settings.to_hash
 end
 
-@logger.add_appenders Logging.appenders.stdout
 
 if config['general']['loglevel'].nil?
   @logger.debug "unable to read log level from config file, defaulting to debug"
@@ -28,7 +28,7 @@ end
 unless config['general']['logfile'].nil?
   logfile = config['general']['logfile']
   @logger.debug "logging to logfile: " + logfile
-  @logger.add_appenders Logging.appenders.file(logfile)
+#  @logger.add_appenders Logging.appenders.file(logfile)
 else
   @logger.debug "no log file specified in config file, logging to console only"
 end
@@ -58,9 +58,12 @@ end
 secret = config['jwt_token']['secret']
 @logger.debug "secret: " + secret
 
-token = Autosign::Token.validate(certname.to_s, key, secret)
+token_validation = Autosign::Token.validate(certname.to_s, key, secret)
+token = Autosign::Token.from_token(key, secret).to_hash
 
-if token == true
+puts token
+
+if token_validation == true
   @logger.info "token validated successfully"
   exit 0
 else

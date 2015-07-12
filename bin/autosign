@@ -6,8 +6,11 @@ include GLI::App
 require 'logging'
 
 @logger = Logging.logger['autosign_cli_logger']
+@logger = Logging.logger['Autosign']
 @logger.level = :warn
 
+
+@autosign = Autosign::Api.new
 
 program_desc 'Easy Puppet Certificate Autosigning'
 
@@ -17,7 +20,6 @@ subcommand_option_handling :normal
 arguments :strict
 
 desc 'Configuration file location'
-default_value Autosign::Config.default_config_file_list.join(", ")
 arg_name 'path'
 flag [:c,:config]
 
@@ -54,7 +56,8 @@ command :generate do |c|
   c.flag [:t,:validfor]
 
   c.action do |global_options,options,args|
-    config = Autosign::Config.new(global_options['config'])
+    config = Autosign::Config.new({'config_file' => global_options['config']})
+    puts "secret: " + config.settings.to_s
     global_options['secret'] = config.settings['jwt_token']['secret'] if global_options['secret'].nil?
     options['validfor'] = config.settings.to_hash['jwt_token']['validity'].to_s if options['validfor'] == '7200'
     @logger.debug "validfor: " + options['validfor']
@@ -84,7 +87,7 @@ command :validate do |c|
   c.flag [:n,:certname]
 
   c.action do |global_options,options,args|
-    config = Autosign::Config.new(global_options['config'])
+    config = Autosign::Config.new({'config_file' => global_options['config']})
     puts config.settings.to_hash['jwt_token']
     global_options['secret'] = config.settings['jwt_token']['secret'] if global_options['secret'].nil?
 
@@ -119,7 +122,7 @@ command :config do |c|
   c.command :print do |print|
     print.action do |global_options,options,args|
       @logger.debug "print command ran with #{global_options} #{options} #{args}"
-      config = Autosign::Config.new(global_options['config'])
+      config = Autosign::Config.new({'config_file' => global_options['config']})
       puts config.settings.to_s
     end
   end
