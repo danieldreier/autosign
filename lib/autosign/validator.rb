@@ -16,12 +16,12 @@ module Autosign
       raise NotImplementedError
     end
 
-    def validate(challenge_password, certname)
+    def validate(challenge_password, certname, raw_csr)
       @log.debug "running validate"
       fail unless challenge_password.is_a?(String)
       fail unless certname.is_a?(String)
 
-      case perform_validation(challenge_password, certname)
+      case perform_validation(challenge_password, certname, raw_csr)
       when true
         @log.debug "validated successfully"
         @log.info  "Validated '#{certname}' using '#{name}' validator"
@@ -36,18 +36,18 @@ module Autosign
       end
     end
 
-    def self.any_validator(challenge_password, certname)
+    def self.any_validator(challenge_password, certname, raw_csr)
       @log = Logging.logger[self.name]
       # iterate over all known validators and attempt to validate using them
       results = self.descendants.map {|c|
         validator = c.new()
         @log.debug "attempting to validate using #{validator.name}"
-        result = validator.validate(challenge_password, certname)
+        result = validator.validate(challenge_password, certname, raw_csr)
         @log.debug "result: #{result.to_s}"
         result
       }
       @log.debug "validator results: " + results.to_s
-      success = results.inject(true) { |sum, n| n and sum }
+      success = results.any?{|result| result == true}
       if success
         @log.info "successfully validated using one or more validators"
         return true
@@ -64,7 +64,7 @@ module Autosign
       @log.debug "starting autosign validator: " + self.name.to_s
     end
 
-    def perform_validation(challenge_password, certname)
+    def perform_validation(challenge_password, certname, raw_csr)
       # override this after inheriting
       # should return true to indicate success validating
       # or false to indicate that the validator was unable to validate
@@ -116,8 +116,8 @@ module Autosign
       config = Autosign::Config.new
 
       if config.settings.to_hash[self.name].nil?
-        @log.warning "Unable to load validator-specific configuration"
-        @log.warning "Cannot load configuration section named '#{self.name}'"
+        @log.warn "Unable to load validator-specific configuration"
+        @log.warn "Cannot load configuration section named '#{self.name}'"
         return {}
       else
         @log.debug "Set validator-specific settings from config file: " + config.settings.to_hash[self.name].to_s

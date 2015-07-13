@@ -7,7 +7,7 @@ module Autosign
 
       private
 
-      def perform_validation(token, certname)
+      def perform_validation(token, certname, raw_csr)
         puts "attempting to validate JWT token"
         return false unless Autosign::Token.validate(certname, token, settings['secret'])
         puts "validated JWT token"

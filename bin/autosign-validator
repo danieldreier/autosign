@@ -16,14 +16,15 @@ certname = ARGV[0]
 @logger.debug "certname is " + certname
 
 @logger.debug "reading CSR from stdin"
-csr = Autosign::Decoder.decode_csr($stdin.read)
+raw_csr = $stdin.read
+csr = Autosign::Decoder.decode_csr(raw_csr)
 exit 1 unless csr.is_a?(Hash)
 
 @logger.debug "CSR: " + csr.to_s
 ### End Inputs
 
 ### validate token
-token_validation = Autosign::Validator.any_validator(csr[:challenge_password].to_s, certname.to_s)
+token_validation = Autosign::Validator.any_validator(csr[:challenge_password].to_s, certname.to_s, raw_csr)
 ### end validation
 
 ### Exit with correct exit status
