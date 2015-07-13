@@ -39,14 +39,17 @@ module Autosign
     def self.any_validator(challenge_password, certname, raw_csr)
       @log = Logging.logger[self.name]
       # iterate over all known validators and attempt to validate using them
+      results_by_validator = {}
       results = self.descendants.map {|c|
         validator = c.new()
         @log.debug "attempting to validate using #{validator.name}"
         result = validator.validate(challenge_password, certname, raw_csr)
+        results_by_validator[validator.name] = result
         @log.debug "result: #{result.to_s}"
         result
       }
       @log.debug "validator results: " + results.to_s
+      @log.info "results by validator: " + results_by_validator.to_s
       success = results.any?{|result| result == true}
       if success
         @log.info "successfully validated using one or more validators"
