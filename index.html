@@ -1,34 +1,25 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset="UTF-8">
     <title>Puppet Autosign by danieldreier</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>Puppet Autosign</h1>
-        <p>Tooling to make puppet autosigning easy, secure, and extensible</p>
+    <section class="page-header">
+      <h1 class="project-name">Puppet Autosign</h1>
+      <h2 class="project-tagline">Tooling to make puppet autosigning easy, secure, and extensible</h2>
+      <a href="https://github.com/danieldreier/autosign" class="btn">View on GitHub</a>
+      <a href="https://github.com/danieldreier/autosign/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/danieldreier/autosign/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-        <p class="view"><a href="https://github.com/danieldreier/autosign">View the Project on GitHub <small>danieldreier/autosign</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/danieldreier/autosign/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/danieldreier/autosign/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/danieldreier/autosign">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h3>
+    <section class="main-content">
+      <h3>
 <a id="still-in-development" class="anchor" href="#still-in-development" aria-hidden="true"><span class="octicon octicon-link"></span></a>Still in development</h3>
 
 <p>This tool is under active development. I do not recommend production use until this notice is removed.</p>
@@ -43,6 +34,35 @@
 <li>CLI tooling</li>
 <li>Extensive logging</li>
 </ul>
+
+<h3>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h3>
+
+<p>To use autosign for basic JWT token-based certificate autosigning, you will need to:</p>
+
+<ol>
+<li>Install and configure the gem on your Puppet CA (probably your master)</li>
+<li>
+<a href="https://docs.puppetlabs.com/puppet/latest/reference/ssl_autosign.html#enabling-policy-based-autosigning">Configure your puppet master</a> to point the <code>autosign</code> setting in the <code>[master]</code> section of your <code>puppet.conf</code> to the <code>autosign-validator</code> executable.</li>
+<li>Create a <code>/var/autosign</code> folder, ensuring that the user puppet runs as (typically <code>puppet</code> or <code>pe-puppet</code> has write access to it.</li>
+<li>Run <code>autosign config setup</code> to generate a default configuration file in <code>/etc/autosign.conf</code>. A random password is generated and added by default.</li>
+</ol>
+
+<p>These commands will probably look something like the following, but note that these were written in a hurry without much testing.</p>
+
+<div class="highlight highlight-shell"><pre>gem install autosign
+autosign config setup
+mkdir /var/autosign
+chown puppet /var/autosign
+puppet config <span class="pl-c1">set</span> --section master autosign /usr/local/bin/autosign-validator</pre></div>
+
+<p>Next, generate your first token. Generating a token looks something like the following</p>
+
+<div class="highlight highlight-shell"><pre>$ autosign generate --certname=foo.example.com
+Autosign token <span class="pl-k">for</span>: foo.example.com
+Valid <span class="pl-k">until</span>: 2015-07-12 22:30:23 -0700
+
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJkYXRhIjoie1wiY2VydG5hbWVcIjpcImZvby5leGFtcGxlLmNvbVwiLFwicmVxdWVzdGVyXCI6XCJEYW5pZWxzLU1hY0Jvb2stUHJvLTIubG9jYWxcIixcInJldXNhYmxlXCI6ZmFsc2UsXCJ2YWxpZGZvclwiOjcyMDAsXCJ1dWlkXCI6XCIxY2ZjNTMzOS05MTE1LTRhZWEtOTM2Ni1hMzIxZjdkN2U5ZDZcIn0iLCJleHAiOiIxNDM2NzY1NDIzIn0.N7LmmAhZo0sxt4oOd_eOj3Mq0h54GP_YKjIUkzUEB_b50pEiJLLHimaaS00eFN2Fvn-PQIF3WXlJTednSr0wGA</pre></div>
 
 <h3>
 <a id="background" class="anchor" href="#background" aria-hidden="true"><span class="octicon octicon-link"></span></a>Background</h3>
@@ -105,14 +125,16 @@
 <a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
 
 <p>Having trouble with Pages? Check out our <a href="https://help.github.com/pages">documentation</a> or <a href="https://github.com/contact">contact support</a> and we’ll help you sort it out.</p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/danieldreier">danieldreier</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/danieldreier/autosign">Puppet Autosign</a> is maintained by <a href="https://github.com/danieldreier">danieldreier</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-              <script type="text/javascript">
+
+    </section>
+
+            <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
@@ -125,3 +147,4 @@
 
   </body>
 </html>
+
