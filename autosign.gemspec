@@ -24,6 +24,7 @@ spec = Gem::Specification.new do |s|
   s.add_runtime_dependency('jwt','~> 1')
   s.add_runtime_dependency('iniparse','~> 1')
   s.add_runtime_dependency('logging')
+  s.add_runtime_dependency('json')
   s.add_runtime_dependency('deep_merge')
   s.add_runtime_dependency('require_all')
 end
