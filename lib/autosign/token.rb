@@ -1,6 +1,6 @@
 module Autosign
   require 'jwt'
-  require 'JSON'
+  require 'json'
   require 'securerandom'
 
   class Token
