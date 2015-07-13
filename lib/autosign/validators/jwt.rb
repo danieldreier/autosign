@@ -24,6 +24,7 @@ module Autosign
 
       def add_to_journal(token)
         validated_token = Autosign::Token.from_token(token, settings['secret'])
+        @log.debug 'add_to_journal settings: ' + settings.to_s
         journal = Autosign::Journal.new({'journalfile' => settings['journalfile']})
         token_expiration = Autosign::Token.token_validto(token, settings['secret'])
 
@@ -45,9 +46,12 @@ module Autosign
 
       def get_override_settings
         # this is a hack to make testing easier
-        if (ENV["AUTOSIGN_TESTMODE"] == "true" and !ENV["AUTOSIGN_TEST_SECRET"].nil?)
+        if (ENV["AUTOSIGN_TESTMODE"] == "true" and
+            !ENV["AUTOSIGN_TEST_SECRET"].nil? and
+            !ENV["AUTOSIGN_TEST_JOURNALFILE"].nil? )
            {
-             'secret' => ENV["AUTOSIGN_TEST_SECRET"].to_s
+             'secret'      => ENV["AUTOSIGN_TEST_SECRET"].to_s,
+             'journalfile' => ENV["AUTOSIGN_TEST_JOURNALFILE"].to_s
            }
         else
           {}

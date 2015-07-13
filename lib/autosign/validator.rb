@@ -4,7 +4,7 @@ require 'require_all'
 module Autosign
   class Validator
     def initialize()
-      @log = Logging.logger[self.name]
+      start_logging()
       settings() # just run to validate settings
       setup()
     end
@@ -58,6 +58,12 @@ module Autosign
     end
 
     private
+
+    def start_logging
+      @log = Logging.logger["Autosign::Validator::" + self.name.to_s]
+      @log.debug "starting autosign validator: " + self.name.to_s
+    end
+
     def perform_validation(challenge_password, certname)
       # override this after inheriting
       # should return true to indicate success validating
@@ -76,7 +82,7 @@ module Autosign
 
     def settings
       @log.debug "merging settings"
-      setting_sources = [default_settings, load_config, get_override_settings]
+      setting_sources = [get_override_settings, load_config, default_settings]
       merged_settings = setting_sources.inject({}) { |merged, hash| merged.deep_merge(hash) }
       @log.debug "using merged settings: " + merged_settings.to_s
       @log.debug "validating merged settings"

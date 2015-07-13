@@ -5,6 +5,7 @@ PATH
       deep_merge
       gli (~> 2)
       iniparse (~> 1)
+      json
       jwt (~> 1)
       logging
       require_all
@@ -68,6 +69,10 @@ PLATFORMS
 DEPENDENCIES
   aruba
   autosign!
+  cucumber
   puppet
   rake
   rdoc
+
+BUNDLED WITH
+   1.10.5

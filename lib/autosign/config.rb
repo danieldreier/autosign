@@ -16,26 +16,28 @@ module Autosign
   class Config
     attr_accessor :location
     attr_accessor :config_file_paths
-    def initialize(settings = {})
+    def initialize(settings_param = {})
       # set up logging
       @log = Logging.logger['Autosign::Config']
       @log.debug "initializing Autosign::Config"
 
       # validate parameter
-      raise 'settings is not a hash' unless settings.is_a?(Hash)
+      raise 'settings is not a hash' unless settings_param.is_a?(Hash)
 
       # look in the following places for a config file
       @config_file_paths = ['/etc/autosign.conf', '/usr/local/etc/autosign.conf', File.join(Dir.home, '.autosign.conf')]
-      @config_file_paths = [ settings['config_file'] ] unless settings['config_file'].nil?
+      @config_file_paths = [ settings_param['config_file'] ] unless settings_param['config_file'].nil?
 
-      @settings = settings
+      @settings = settings_param
       @log.debug "Using merged settings hash: " + @settings.to_s
     end
 
     def settings
       @log.debug "merging settings"
       setting_sources = [default_settings, configfile, @settings]
-      setting_sources.inject({}) { |merged, hash| merged.deep_merge(hash) }
+      merged_settings = setting_sources.inject({}) { |merged, hash| merged.deep_merge(hash) }
+      @log.debug "using merged settings: " + merged_settings.to_s
+      return merged_settings
     end
 
     private

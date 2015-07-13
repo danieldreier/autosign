@@ -14,6 +14,7 @@ module Autosign
     end
 
     def setup
+      @log.debug "using journalfile: " + self.settings['journalfile']
       journalfile = self.settings['journalfile']
       store = YAML::Store.new(journalfile, true)
       store.ultra_safe = true

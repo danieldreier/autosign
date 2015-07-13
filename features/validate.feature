@@ -9,7 +9,9 @@ Feature: Validate autosign key
       | AUTOSIGN_TESTMODE      | true   |
       | AUTOSIGN_TEST_SECRET   | secret |
       | AUTOSIGN_TEST_LOGLEVEL | info   |
-    When I run `autosign-validator i-7672fe81` interactively
+      | AUTOSIGN_TEST_JOURNALFILE | /tmp/autosign_journal |
+    When I run `rm -f /tmp/autosign_journal`
+     And I run `autosign-validator i-7672fe81` interactively
      And I pipe in the file "../../fixtures/i-7672fe81.pem"
     Then the output should contain "token validated successfully"
     Then the exit status should be 0
