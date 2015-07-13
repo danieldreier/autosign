@@ -73,6 +73,3 @@ DEPENDENCIES
   puppet
   rake
   rdoc
-
-BUNDLED WITH
-   1.10.5
