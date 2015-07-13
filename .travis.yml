@@ -1,6 +1,6 @@
 ---
 language: ruby
-before_install: rm Gemfile.lock || true
+cache: bundler
 rvm:
   - 1.9.3
   - jruby-19mode
