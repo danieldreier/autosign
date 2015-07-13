@@ -42,6 +42,7 @@ module Autosign
 
     def policy_executables
       @log.debug "in policy_executables"
+      return [] if settings['external_policy_executables'].nil?
       settings['external_policy_executables'].split(',').map{ |s| s.strip }
     end
 
