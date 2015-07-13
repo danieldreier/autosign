@@ -44,7 +44,14 @@ module Autosign
       end
 
       def get_override_settings
-        {}
+        # this is a hack to make testing easier
+        if (ENV["AUTOSIGN_TESTMODE"] == "true" and !ENV["AUTOSIGN_TEST_SECRET"].nil?)
+           {
+             'secret' => ENV["AUTOSIGN_TEST_SECRET"].to_s
+           }
+        else
+          {}
+        end
       end
 
     def validate_settings(settings)
