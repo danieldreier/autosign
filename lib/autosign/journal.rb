@@ -20,29 +20,6 @@ module Autosign
       return store
     end
 
-    # Check whether a UUID already exists in the journal
-    #
-    # ==== Attributes
-    #
-    # * +uuid+ - Unique journal entry identifier
-    #
-    # ==== Examples
-    #
-    # To exit if a token has already been used:
-    #
-    #    journal = Autosign::Journal.new({journalfile = '/etc/autosign/journal')
-    #    exit 1 if journal.check('d2e601c8-93df-4459-be18-1877eaf00920')
-    def check(uuid)
-      fail unless validate_uuid(uuid)
-      true
-    end
-
-    def delete(uuid)
-      fail unless validate_uuid(uuid)
-      true
-    end
-
-
     # Add a new token to the journal
     #
     # ==== Attributes
