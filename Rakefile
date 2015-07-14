@@ -1,3 +1,5 @@
+require 'cucumber/rake/task'
+require 'rspec/core/rake_task'
 require 'rake/clean'
 require 'rubygems'
 require 'rubygems/package_task'
