@@ -17,6 +17,9 @@ module Autosign
       rescue OpenSSL::X509::RequestError
         @log.error "Rescued OpenSSL::X509::RequestError; unable to decode CSR"
         return nil
+      rescue
+        @log.error "Rescued an OpenSSL error. Unable to decode CSR."
+        return nil
       end
 
       # extract challenge password
