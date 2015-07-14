@@ -9,6 +9,22 @@ context Autosign::Validators::JWT do
   let(:reusable_token) { Autosign::Token.new('foo.example.com',  true, 3600, 'rspec_test', 'secret').sign }
   let(:expired_token)  { Autosign::Token.new('foo.example.com',  true,   -1, 'rspec_test', 'secret').sign }
 
+  before {
+    # stub configuration
+    data = { 'general' => {
+               'loglevel' => :debug,
+               'logfile'  => '/tmp/autosign.log'
+               },
+             'jwt_token' => {
+                'secret' => 'secret',
+                'validity' => 3600,
+                'journalfile' => '/tmp/autosign.journal'
+               }
+             }
+    allow_any_instance_of(Autosign::Config).to receive(:settings).and_return(data)
+  }
+
+
   context 'class methods' do
     describe '.new' do
       it 'requires no parameters' do

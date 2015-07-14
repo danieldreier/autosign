@@ -5,13 +5,17 @@ context Autosign::Validators::Passwordlist do
   let(:certname)  { 'host.example.com' }
   let(:validator) { Autosign::Validators::Passwordlist.new }
 
-  # this is a crude way to fake the config file
   before {
-    data = '[password_list]
-password = hunter2
-password = opensesame
-password = CPE1704TKS'
-    allow(File).to receive(:read).and_return(data)
+    # stub configuration
+    data = { 'general' => {
+               'loglevel' => :debug,
+               'logfile'  => '/tmp/autosign.log'
+               },
+             'password_list' => {
+                'password' => ['hunter2', 'opensesame', 'CPE1704TKS']
+               }
+             }
+    allow_any_instance_of(Autosign::Config).to receive(:settings).and_return(data)
   }
 
   context 'class methods' do
