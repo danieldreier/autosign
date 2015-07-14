@@ -1,5 +1,11 @@
 module Autosign
   module Validators
+    # Validate certificate signing requests using JSON Web Tokens (JWT).
+    # This is the expected primary validator when using the autosign gem.
+    # Validation requires that the shared secret used to generate the JWT is
+    # the same as on the validating system. The validator also checks that the
+    # token has not expired, and that one-time (non-reusable) tokens have not
+    # been previously used.
     class JWT < Autosign::Validator
 
       # set the user-friendly name of the JWT validator.
