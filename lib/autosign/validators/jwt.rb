@@ -27,9 +27,9 @@ module Autosign
       # @param raw_csr [String] Raw CSR; not used in this validator.
       # @return [True, False] returns true to indicate successful validation, and false to indicate failure to validate
       def perform_validation(token, certname, raw_csr)
-        puts "attempting to validate JWT token"
+        @log.info "attempting to validate JWT token"
         return false unless Autosign::Token.validate(certname, token, settings['secret'])
-        puts "validated JWT token"
+        @log.info "validated JWT token"
         @log.debug "validated JWT token, checking reusability"
 
         return true if is_reusable?(token)
