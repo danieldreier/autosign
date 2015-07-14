@@ -11,8 +11,7 @@ spec = Gem::Specification.new do |s|
   s.files = `git ls-files`.split("
 ")
   s.require_paths << 'lib'
-  s.has_rdoc = true
-  s.extra_rdoc_files = ['README.rdoc','autosign.rdoc']
+  s.has_rdoc = false
   s.rdoc_options << '--title' << 'autosign' << '--main' << 'README.rdoc' << '-ri'
   s.bindir = 'bin'
   s.executables << 'autosign'
@@ -22,6 +21,7 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency('cucumber', '~> 2')
   s.add_development_dependency('puppet', '~> 3')
   s.add_development_dependency('rspec', '~> 3')
+  s.add_development_dependency('coveralls')
   s.add_runtime_dependency('gli','~> 2')
   s.add_runtime_dependency('jwt','~> 1')
   s.add_runtime_dependency('iniparse','~> 1')
