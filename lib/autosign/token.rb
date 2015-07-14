@@ -117,12 +117,17 @@ module Autosign
     end
 
     # Sign the token with HMAC using a SHA-512 hash
-    # @return [String] signed, serialized JSON web token
     def sign()
       exp_payload = { :data => to_json, :exp => validto.to_s}
       JWT.encode exp_payload, secret, 'HS512'
     end
 
+    # Create an Autosign::Token object from a serialized token after validating
+    # the signature and expiration time validity.
+    #
+    # @param token [String] JSON Web Token coming from the certificate signing request
+    # @param secret [String] shared HMAC secret used to sign or validate tokens
+    # @return [Autosign::Token] instance of Autosign::Token with the settings from the serialized token
     def self.from_token(token, hmac_secret)
       begin
         decoded = JWT.decode(token, hmac_secret)[0]

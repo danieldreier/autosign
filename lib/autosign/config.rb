@@ -20,6 +20,11 @@ module Autosign
     end
   end
 
+  # Class to manage configuration settings.
+  # The purpose of this class is to interact with the configuration file,
+  # merge defaults and user-provided settings, and present a configuration hash
+  # so that validators and other components do not have to re-implement config
+  # file handling.
   class Config
     # Create a config instance to interact with configuration settings
     # To specify a configuration file, settings_param should include something like:

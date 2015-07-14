@@ -1,4 +1,8 @@
 module Autosign
+  # Class to abstract X509 certificate signing request decoding.
+  # This class is only expected to be used for class methods.
+  # The purpose is to extract common fields from CSRs so that individual
+  # validators don't have to re-implement that logic.
   class Decoder
     # Extract common name and challenge_password OID from X509 SSL Certificate signing requests
     #
