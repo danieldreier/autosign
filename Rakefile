@@ -1,11 +1,16 @@
-require 'cucumber/rake/task'
-require 'rspec/core/rake_task'
-require 'rake/clean'
 require 'rubygems'
+begin
+  require 'rspec/core/rake_task'
+  require 'cucumber'
+  require 'cucumber/rake/task'
+  require 'rdoc/task'
+  RSpec::Core::RakeTask.new(:spec) do |t|
+    t.rspec_opts = '--format documentation'
+  end
+rescue LoadError
+end
+require 'rake/clean'
 require 'rubygems/package_task'
-require 'rdoc/task'
-require 'cucumber'
-require 'cucumber/rake/task'
 Rake::RDocTask.new do |rd|
   rd.main = "README.rdoc"
   rd.rdoc_files.include("README.rdoc","lib/**/*.rb","bin/**/*")
@@ -19,11 +24,9 @@ end
 CUKE_RESULTS = 'results.html'
 CLEAN << CUKE_RESULTS
 desc 'Run features'
+
 Cucumber::Rake::Task.new(:features) do |t|
-  opts = "features --format html -o #{CUKE_RESULTS} --format progress -x"
-  opts += " --tags #{ENV['TAGS']}" if ENV['TAGS']
-  t.cucumber_opts =  opts
-  t.fork = false
+  t.cucumber_opts = "features --format pretty"
 end
 
 desc 'Run features tagged as work-in-progress (@wip)'
@@ -34,7 +37,6 @@ Cucumber::Rake::Task.new('features:wip') do |t|
   t.fork = false
 end
 
-task :cucumber => :features
 task 'cucumber:wip' => 'features:wip'
 task :wip => 'features:wip'
 require 'rake/testtask'
@@ -42,5 +44,7 @@ Rake::TestTask.new do |t|
   t.libs << "test"
   t.test_files = FileList['test/*_test.rb']
 end
+
+task :ci => [:spec, :features]
 
 task :default => [:test,:features]
