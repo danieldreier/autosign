@@ -1,7 +1,9 @@
-require 'logging'
-
 module Autosign
   class Decoder
+    # Extract common name and challenge_password OID from X509 SSL Certificate signing requests
+    #
+    # @param csr[String] X509 format CSR
+    # @return [Hash] hash containing :challenge_password and :common_name keys
     def self.decode_csr(csr)
       @log = Logging.logger['Autosign::Decoder']
       @log.debug "decoding CSR"

@@ -1,21 +1,34 @@
+require 'iniparse'
+require 'rbconfig'
+require 'securerandom'
+require 'deep_merge'
+
 module Autosign
+  # Exceptions namespace for Autosign class
   module Exceptions
+    # Exception representing a general failure during validation
     class Validation < Exception
     end
+    # Exception representing a missing file during config validation
     class NotFound < Exception
     end
+    # Exception representing a permissions error during config validation
     class Permissions < Exception
     end
+    # Exception representing errors that Autosign does not know how to handle
     class Error < Exception
     end
   end
-    require 'iniparse'
-    require 'rbconfig'
-    require 'securerandom'
-    require 'deep_merge'
+
   class Config
-    attr_accessor :location
-    attr_accessor :config_file_paths
+    # Create a config instance to interact with configuration settings
+    # To specify a configuration file, settings_param should include something like:
+    # {'config_file' => '/usr/local/etc/autosign.conf'}
+    #
+    # If no defaults are provided, the class checks several common locations for config file path.
+    #
+    # @param settings_param [Hash] config settings that should override defaults and config file settings
+    # @return [Autosign::Config] instance of the Autosign::Config class
     def initialize(settings_param = {})
       # set up logging
       @log = Logging.logger['Autosign::Config']
@@ -32,6 +45,10 @@ module Autosign
       @log.debug "Using merged settings hash: " + @settings.to_s
     end
 
+    # Return a merged settings hash of defaults, config file settings
+    # and passed in settings (such as from the CLI)
+    #
+    # @return [Hash] deep merged settings hash
     def settings
       @log.debug "merging settings"
       setting_sources = [default_settings, configfile, @settings]
@@ -42,6 +59,15 @@ module Autosign
 
     private
 
+    # default settings hash for the whole autosign gem
+    # the format must map to something an ini file can represent, so the
+    # structure should have a top-level key named "general" and key-value pairs
+    # below it, with strings as keys and strings or integers as values.
+    #
+    # validator settings should not be here; put those in the validator's
+    # default settings method.
+    #
+    # @return [Hash] default configuration settings
     def default_settings
       { 'general' =>
         {
@@ -56,6 +82,10 @@ module Autosign
       }
     end
 
+    # Locate the configuration file, parse it from INI-format, and return
+    # the results as a hash. Returns an empty hash if no config file is found.
+    #
+    # @return [Hash] configuration settings loaded from INI file
     def configfile
       @log.debug "Finding config file"
       @config_file_paths.each { |file|
@@ -73,6 +103,11 @@ module Autosign
       return {}
     end
 
+    # Validate configuration file
+    # Raises an exception if the config file cannot be validated
+    #
+    # @param configfile [String] the absolute path of the config file to validate
+    # @return [String] the absolute path of the config file
     def validate_config_file(configfile = location)
       @log.debug "validating config file"
       unless File.file?(configfile)
@@ -89,6 +124,9 @@ module Autosign
       configfile
     end
 
+    # Generate a default configuration file
+    # As a convenience for the user, we can generate a default config file
+    # This class is currently too tightly coupled with the JWT token validator
     def self.generate_default()
       os_defaults = (
         case RbConfig::CONFIG['host_os']

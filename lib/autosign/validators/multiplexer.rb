@@ -41,9 +41,11 @@ module Autosign
     end
 
     def policy_executables
-      @log.debug "in policy_executables"
-      return [] if settings['external_policy_executables'].nil?
-      settings['external_policy_executables'].split(',').map{ |s| s.strip }
+      return [] if settings['external_policy_executable'].nil?
+      exec_list = settings['external_policy_executable']
+      return [exec_list] if exec_list.is_a?(String)
+      return exec_list if exec_list.is_a?(Array)
+      return []
     end
 
 
@@ -54,18 +56,6 @@ module Autosign
         return false
       end
 
-      unless settings['external_policy_executables'].nil?
-        @log.debug "validating that external_policy_executables list is a string"
-        return false unless settings['external_policy_executables'].is_a?(String)
-        @log.debug "validating that external_policy_executables list is a comma separated list"
-        external_policy_executables = settings['external_policy_executables'].split(',').map{ |s| s.strip }
-        return false unless external_policy_executables.is_a?(Array)
-
-        external_policy_executables.each {|path|
-          @log.debug "validating that #{path} is executable"
-          return false unless File.executable?(path)
-        }
-      end
       @log.debug "done validating settings"
       true
     end

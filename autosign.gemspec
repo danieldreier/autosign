@@ -19,7 +19,6 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency('rake')
   s.add_development_dependency('rdoc')
   s.add_development_dependency('aruba')
-  s.add_development_dependency('puppet')
   s.add_development_dependency('cucumber')
   s.add_runtime_dependency('gli','~> 2')
   s.add_runtime_dependency('jwt','~> 1')
@@ -28,4 +27,5 @@ spec = Gem::Specification.new do |s|
   s.add_runtime_dependency('json')
   s.add_runtime_dependency('deep_merge')
   s.add_runtime_dependency('require_all')
+  s.add_runtime_dependency('yard')
 end
