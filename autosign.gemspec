@@ -20,6 +20,7 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency('rdoc')
   s.add_development_dependency('aruba')
   s.add_development_dependency('cucumber')
+  s.add_development_dependency('puppet')
   s.add_runtime_dependency('gli','~> 2')
   s.add_runtime_dependency('jwt','~> 1')
   s.add_runtime_dependency('iniparse','~> 1')
