@@ -37,7 +37,7 @@ module Autosign
     # This is the primary way this class is expected to be used
     def add(uuid, validto, data = {})
       @log.debug "attempting to add UUID: '#{uuid.to_s}' which is valid to '#{Time.at(validto.to_i)}' with data #{data.to_s}"
-      puts validate_uuid(uuid).to_s
+      return false unless validate_uuid(uuid)
 
       store = setup
       # wrap the change in a transaction because multiple autosign instances

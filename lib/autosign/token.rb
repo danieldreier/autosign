@@ -71,6 +71,12 @@ module Autosign
         errors << "Invalid Token"
       end
       @log.warn "validation failed with: #{errors.join(', ')}" unless errors.count == 0
+
+      if data.nil?
+        @log.error "token is nil; this probably means the token failed to validate"
+        return false
+      end
+
       certname_is_regex = (data["certname"] =~ /\/[^\/].*\//) ? true : false
 
       if certname_is_regex
