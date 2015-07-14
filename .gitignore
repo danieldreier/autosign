@@ -1,0 +1,5 @@
+html
+doc
+.vagrant
+.yardoc
+autosign.conf
