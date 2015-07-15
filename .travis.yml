@@ -11,3 +11,9 @@ rvm:
   - 2.2.2
 script:
   - bundle exec rake ci
+deploy:
+  provider: rubygems
+  api_key:
+    secure: "ivsiPBTcedPXuQ3hiLhLMDEaM5UUWfNi32Wy/BaDw8qwrUa6+v87IOFzipse4pa7GXzEpZf65o6/5ihxGeSZtw1sf90kwF2tMVWqjp4oFoHqg83Qscsz49X4yE1IkgVj1W/tOg2gJDneCjf250bZ3Wg/3UFSORM/f/3WVQ9vidHzb0JEaPWf4ClSeW7UVZfGz2muc6txKsQJwWgNccuyOnCfc9ElS4Vn130cIMB/t0xumVos2z8CExAFJ2dMfSqHJMc/NtamXT/tED6e2G28wLQGzViO48DuAyG3v+ubrEFpknaLkEzryfvOUPieP/hpCm9yfzbkTnulgFg1qw2QMtkrubECujZ3hg59UNyeKcixrihEWL6oSqCkJKbGyVnNxYpisb08Jdxq2o1xQD5uh1EGmMaewl3NExYdjCTzDmCVgEO7I5ItiKwUCMl9mVAGa2LEiI/SCjFxoEdglJOfCqeGunWXG1QjE2KYaD1qzkR4VCqBEP7v+wgheL0108VILjOQ6SzfMt6aaAjX0nQ2thtMvIeWUVXBlRUOzNVtQaGSyMcABPespDoyrlE5N/6HwVon+OObVKo+0mx9OYrRwxlBkAqp/vV2mXSdlD6ThUYgk7bk5ofpKQuJGTT/sr1Vyulzh2a2B1D2lDCK87mHbqvd5XnxuGCNFA90wxJ5biI="
+  on:
+    tags: true
