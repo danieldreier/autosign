@@ -62,11 +62,11 @@ command :generate do |c|
     help_now!('validfor setting must be an positive integer number of seconds') if !/\A\d+\z/.match(options['validfor'].to_s)
     token = Autosign::Token.new(options['certname'].to_s, options['reusable'], options['validfor'].to_i, Socket.gethostname.to_s, global_options['secret'])
     @logger.info "generated token for: " + options['certname'].to_s
-    puts "Autosign token for: " + token.certname
-    puts "Valid until: " + Time.at(token.validto).to_s
+    puts "Autosign token for: " + token.certname + ", valid until: " + Time.at(token.validto).to_s
+    puts "To use the token, put the following in ${puppet_confdir}/csr_attributes.yaml prior to running puppet agent for the first time:"
     puts ""
-    puts token.sign.to_s
-    puts ""
+    puts "custom_attributes:"
+    puts "  challengePassword: \"#{token.sign.to_s}\""
   end
 end
 
@@ -118,18 +118,6 @@ command :config do |c|
     end
   end
 
-end
-
-desc 'Install an autosign token; run this prior to running puppet for the first time on an agent'
-arg_name 'token'
-command :use do |c|
-  c.action do |global_options,options,args|
-    puppet_confdir = %x[puppet config print confdir].chomp
-    @logger.debug "use command ran with #{global_options} #{options} #{args}"
-    puts "put the following in #{puppet_confdir}/csr_attributes.yaml prior to running puppet agent for the first time:
-custom_attributes:
-  challengePassword: \"#{args[0]}\""
-  end
 end
 
 pre do |global,command,options,args|
