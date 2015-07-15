@@ -15,6 +15,7 @@ spec = Gem::Specification.new do |s|
   s.rdoc_options << '--title' << 'autosign' << '--main' << 'README.rdoc' << '-ri'
   s.bindir = 'bin'
   s.executables << 'autosign'
+  s.executables << 'autosign-validator'
   s.add_development_dependency('rake', '~> 10')
   s.add_development_dependency('rdoc', '~> 4')
   s.add_development_dependency('aruba', '~> 0.6')
