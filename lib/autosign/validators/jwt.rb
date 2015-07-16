@@ -38,7 +38,7 @@ module Autosign
       end
 
       def is_reusable?(token)
-        Autosign::Token.from_token(token, settings['secret']).reusable
+        Autosign::Token.from_token(token, settings['secret']).reusable?
       end
 
       # Attempt to add a token to the one-time token journal.

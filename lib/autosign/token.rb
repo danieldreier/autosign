@@ -106,7 +106,7 @@ module Autosign
 
     # check if the token is reusable or a one-time use token
     # @return [True, False] return true if the token can be used multiple times, false if the token can only be used once
-    def reusable
+    def reusable?
       !!@reusable
     end
 
@@ -116,7 +116,7 @@ module Autosign
       {
         "certname"  => certname,
         "requester" => requester,
-        "reusable"  => reusable,
+        "reusable"  => reusable?,
         "validfor"  => validfor,
         "uuid"      => uuid
       }
