@@ -84,4 +84,6 @@ If you're having problems, try the following:
 
 ### Further Reading
 
-See [https://danieldreier.github.io/autosign](https://danieldreier.github.io/autosign) for more background on why this exists.
+- [https://danieldreier.github.io/autosign](https://danieldreier.github.io/autosign) has background on why this exists.
+- Automatically generated code documentation in YARDOC format is [available on rubydoc.info](http://rubydoc.info/github/danieldreier/autosign).
+- Look at the [puppet-autosign](https://travis-ci.org/danieldreier/puppet-autosign) puppet module to automate setup of this tool, and for a puppet function to generate tokens inside of Puppet, for example when provisioning systems in AWS.
