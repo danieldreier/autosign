@@ -13,7 +13,7 @@ Feature: Generate autosign key
       secret = secret
       """
     When I run `chmod 600 autosign.conf`
-     And I run `autosign --config autosign.conf generate --certname foo.example.com`
+     And I run `autosign --config autosign.conf generate foo.example.com`
     Then the output should contain "Autosign token for: foo.example.com"
      And the output should contain "valid until"
      And the exit status should be 0
@@ -28,7 +28,7 @@ Feature: Generate autosign key
       validity = 7200
       """
     When I run `chmod 600 autosign.conf`
-    When I run `autosign --config autosign.conf generate --certname foo.example.com --reusable`
+    When I run `autosign --config autosign.conf generate foo.example.com --reusable`
     Then the output should contain "Autosign token for: foo.example.com"
      And the output should contain "valid until"
      And the exit status should be 0

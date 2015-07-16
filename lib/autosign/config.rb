@@ -148,13 +148,13 @@ module Autosign
           {
             'logpath'     => '/var/log/autosign.log',
             'confpath'    => '/etc/autosign.conf',
-            'journalfile' => File.join(Dir.home, '/var/log/autosign.journal')
+            'journalfile' => File.join(Dir.home, '/var/autosign/autosign.journal')
           }
         when /bsd/
           {
             'logpath'     => '/var/log/autosign.log',
             'confpath'    => '/usr/local/etc/autosign.conf',
-            'journalfile' => File.join(Dir.home, '/var/log/autosign.journal')
+            'journalfile' => File.join(Dir.home, '/var/autosign/autosign.journal')
           }
         else
           raise Autosign::Exceptions::Error, "unsupported os: #{host_os.inspect}"
@@ -165,15 +165,23 @@ module Autosign
         doc.section("general") do |general|
           general.option("loglevel", "warn")
           general.option("logfile", os_defaults['logpath'])
-          general.option("journalfile", os_defaults['journalfile'])
         end
         doc.section("jwt_token") do |jwt_token|
           jwt_token.option("secret", SecureRandom.base64(15))
           jwt_token.option("validity", 7200)
+          jwt_token.option("journalfile", os_defaults['journalfile'])
+        end
+        doc.section("multiplexer") do |jwt_token|
+          jwt_token.option(";external_policy_executable", '/usr/local/bin/some_autosign_executable')
+          jwt_token.option(";external_policy_executable", '/usr/local/bin/another_autosign_executable')
+        end
+        doc.section("password_list") do |jwt_token|
+          jwt_token.option(";password", 'static_autosign_password_here')
+          jwt_token.option(";password", 'another_static_autosign_password')
         end
       end.to_ini
       raise Autosign::Exceptions::Error, "file #{os_defaults['confpath']} already exists, aborting" if File.file?(os_defaults['confpath'])
-      File.write(os_defaults['confpath'], config)
+      return os_defaults['confpath'] if File.write(os_defaults['confpath'], config)
     end
   end
 end

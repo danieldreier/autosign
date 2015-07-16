@@ -37,14 +37,10 @@ desc 'Quiet output - only log errors'
 switch [:q, :quiet]
 
 desc 'Generate an autosign token'
-arg_name 'certname or regex the autosign token will be valid for'
+arg_name 'certname/regex'
 command :generate do |c|
   c.desc 'Generate a reusable token; default is to generate one-time tokens'
   c.switch [:r, :reusable]
-
-  c.desc 'certname or regex of certnames the autosign token will be valid for'
-  c.arg_name 'certname'
-  c.flag [:n,:certname]
 
   c.desc 'autosign token validity period'
   c.default_value '7200'
@@ -57,11 +53,12 @@ command :generate do |c|
     options['validfor'] = config.settings.to_hash['jwt_token']['validity'].to_s if options['validfor'] == '7200'
     @logger.debug "validfor: " + options['validfor']
     help_now!('no secret was defined via --secret or a config file') if global_options['secret'].nil?
-    help_now!('certname is required') if options['certname'].nil?
+    help_now!('certname is required as argument') if args[0].nil?
+    certname = args[0]
 
     help_now!('validfor setting must be an positive integer number of seconds') if !/\A\d+\z/.match(options['validfor'].to_s)
-    token = Autosign::Token.new(options['certname'].to_s, options['reusable'], options['validfor'].to_i, Socket.gethostname.to_s, global_options['secret'])
-    @logger.info "generated token for: " + options['certname'].to_s
+    token = Autosign::Token.new(certname, options['reusable'], options['validfor'].to_i, Socket.gethostname.to_s, global_options['secret'])
+    @logger.info "generated token for: " + certname
     puts "Autosign token for: " + token.certname + ", valid until: " + Time.at(token.validto).to_s
     puts "To use the token, put the following in ${puppet_confdir}/csr_attributes.yaml prior to running puppet agent for the first time:"
     puts ""
@@ -101,11 +98,12 @@ end
 desc 'Autosign configuration'
 command :config do |c|
 
-  c.desc 'Configure a puppet server for autosigning'
+  c.desc 'Create a default autosign.conf file'
   c.command :setup do |setup|
     setup.action do |global_options,options,args|
       @logger.info "setup command ran with #{global_options} #{options} #{args}"
-      @logger.info "generated default config file" if Autosign::Config.generate_default
+      result = Autosign::Config.generate_default
+      STDOUT.puts "generated default config file at #{result}" if result
     end
   end
 
