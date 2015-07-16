@@ -132,6 +132,10 @@ module Autosign
       true
     end
 
+    # Find other classes that inherit from this class.
+    # Used to discover autosign validators. There is probably no reason to use
+    # this directly.
+    # @return [Array] of classes inheriting from Autosign::Validator
     def self.descendants
       ObjectSpace.each_object(Class).select { |klass| klass < self }
     end
