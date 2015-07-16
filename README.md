@@ -9,7 +9,7 @@ This tool provides a CLI for performing puppet policy-based autosigning using JW
 
 ### Quick Start: How to Generate Tokens
 
-##### 1. Install Gem
+##### 1. Install Gem on Puppet Master
 ```shell
 gem install autosign
 ```
@@ -20,12 +20,21 @@ gem install autosign
 autosign config setup
 ```
 
-##### 3. Generate your first autosign token
+##### 3. Generate your first autosign token on the puppet master
 ```shell
-autosign foo.example.com
+autosign generate foo.example.com
 ```
 
-The resulting output can be copied to `/etc/puppet/csr_attributes.yaml` prior to running puppet for the first time to add the token to the CSR as the `challengePassword` OID.
+The output will look something like
+```
+Autosign token for: foo.example.com, valid until: 2015-07-16 16:25:50 -0700
+To use the token, put the following in ${puppet_confdir}/csr_attributes.yaml prior to running puppet agent for the first time:
+
+custom_attributes:
+  challengePassword: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJkYXRhIjoie1wiY2VydG5hbWVcIjpcImZvby5leGFtcGxlLmNvbVwiLFwicmVxdWVzdGVyXCI6XCJEYW5pZWxzLU1hY0Jvb2stUHJvLTIubG9jYWxcIixcInJldXNhYmxlXCI6ZmFsc2UsXCJ2YWxpZGZvclwiOjcyMDAsXCJ1dWlkXCI6XCJkM2YyNzI0OC1jZDFmLTRhZmItYjI0MC02ZjBjMDU4NWJiZDNcIn0iLCJleHAiOiIxNDM3MDg5MTUwIn0.lC-EzWaV2dL81aLL7P-9mGwNbiOQDJWcoYjuSHVOqmaLtc7Wis5OZvHFOLln2Fn9qv98oSTnZsIkjmFpbI5dvA"
+  ```
+
+The resulting output can be copied to `/etc/puppet/csr_attributes.yaml` on an agent machine prior to running puppet for the first time to add the token to the CSR as the `challengePassword` OID. (just copy-paste from one terminal to another to copy the text)
 
 ### Quick Start: Puppet Master Configuration
 
