@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    autosign (0.0.2)
+    autosign (0.0.7)
       deep_merge (~> 1)
       gli (~> 2)
       iniparse (~> 1)
@@ -9,6 +9,7 @@ PATH
       jwt (~> 1)
       logging (~> 2)
       require_all (~> 1)
+      safe_yaml (~> 1)
       yard (~> 0.8)
 
 GEM
@@ -93,6 +94,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
+    safe_yaml (1.0.4)
     simplecov (0.10.0)
       docile (~> 1.1.0)
       json (~> 1.8)
