@@ -3,3 +3,5 @@ doc
 .vagrant
 .yardoc
 autosign.conf
+results.html
+coverage/
