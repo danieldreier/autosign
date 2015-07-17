@@ -64,9 +64,9 @@ Your master is now configured to autosign using the autosign gem.
 
 If you already had an autosign script you want to continue using, add a setting to your `autosign.conf` like:
 
-```ini
-[multiplexer]
-external_policy_executable = /path/to/autosign/executable
+```yaml
+multiplexer:
+  external_policy_executable: "/path/to/autosign/executable"
 ```
 
 The master will validate the certificate if either the token validator or the external validator succeeds.
@@ -74,9 +74,9 @@ The master will validate the certificate if either the token validator or the ex
 If the autosign script was just validating simple strings, you can use the `password_list` validator instead. For example, to configure the master to sign any CSR that includes the challenge passwords of "hunter2" or "CPE1704TKS" you would add:
 
 ```ini
-[password_list]
-password = hunter2
-password = CPE1704TKS
+password_list:
+  password: "hunter2"
+  password: "CPE1704TKS"
 ```
 
 Note that this is a relatively insecure way to do certificate autosigning. Using one-time tokens via the `autosign generate` command is more secure. This functionality is provided to grandfather in existing use cases to ease the transition.
@@ -85,7 +85,7 @@ Note that this is a relatively insecure way to do certificate autosigning. Using
 ### Troubleshooting
 If you're having problems, try the following:
 
-- Set `loglevel = debug` in `/etc/autosign.conf`
+- Set `loglevel: "debug"` in `/etc/autosign.conf`
 - Check the `journalfile`, in `/var/autosign/autosign.journal` by default, to see if the one-time token's UUID has already been recorded. It's just YAML, so you can either delete it or remove the offending entry if you actually want to re-use a token.
 - you can manually trigger the autosigning script with something like `cat the_csr.csr | autosign-validator certname.example.com`
 - If you run the puppet master foregrounded, you'll see quite a bit of autosign script output if autosign loglevel is set to debug.

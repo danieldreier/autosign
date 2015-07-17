@@ -8,9 +8,10 @@ Feature: Generate autosign key
       And a hostname of "foo.example.com"
       And a file named "autosign.conf" with:
       """
-      [jwt_token]
-      validity = 7200
-      secret = secret
+      ---
+      jwt_token:
+        validity: '7200'
+        secret: 'secret'
       """
     When I run `chmod 600 autosign.conf`
      And I run `autosign --config autosign.conf generate foo.example.com`
@@ -23,9 +24,10 @@ Feature: Generate autosign key
       And a hostname of "foo.example.com"
       And a file named "autosign.conf" with:
       """
-      [jwt_token]
-      secret = secret
-      validity = 7200
+      ---
+      jwt_token:
+        validity: '7200'
+        secret: 'secret'
       """
     When I run `chmod 600 autosign.conf`
     When I run `autosign --config autosign.conf generate foo.example.com --reusable`
@@ -38,8 +40,9 @@ Feature: Generate autosign key
       And a hostname of "foo.example.com"
       And a file named "autosign.conf" with:
       """
-      [jwt_token]
-      secret = secret
+      ---
+      jwt_token:
+        secret: 'secret'
       """
     When I run `chmod 600 autosign.conf`
     When I run `autosign --config autosign.conf validate --certname "foo.example.com" "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJkYXRhIjoie1wiY2VydG5hbWVcIjpcImZvby5leGFtcGxlLmNvbVwiLFwicmVxdWVzdGVyXCI6XCJEYW5pZWxzLU1hY0Jvb2stUHJvLTIubG9jYWxcIixcInJldXNhYmxlXCI6ZmFsc2UsXCJ2YWxpZGZvclwiOjI5OTk5OTk5OSxcInV1aWRcIjpcIjlkYTA0Yzc4LWQ5NjUtNDk2OC04MWNjLWVhM2RjZDllZjVjMFwifSIsImV4cCI6IjE3MzY0NjYxMzAifQ.PJwY8rIunVyWi_lw0ypFclME0jx3Vd9xJIQSyhN3VUmul3V8u4Tp9XwDgoAu9DVV0-WEG2Tfxs6F8R6Fn71Ndg"`
@@ -51,8 +54,9 @@ Feature: Generate autosign key
       And a hostname of "foo.example.com"
       And a file named "autosign.conf" with:
       """
-      [jwt_token]
-      secret = secret
+      ---
+      jwt_token:
+        secret: 'secret'
       """
     When I run `chmod 600 autosign.conf`
     When I run `autosign --config autosign.conf validate --certname "foo.example.com" "invalid_token"`
@@ -63,8 +67,9 @@ Feature: Generate autosign key
       And a hostname of "foo.example.com"
       And a file named "autosign.conf" with:
       """
-      [jwt_token]
-      secret = secret
+      ---
+      jwt_token:
+        secret: 'secret'
       """
     When I run `chmod 600 autosign.conf`
     When I run `autosign --config autosign.conf validate --certname "foo.example.com" "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJkYXRhIjoie1wiY2VydG5hbWVcIjpcImZvby5leGFtcGxlLmNvbVwiLFwicmVxdWVzdGVyXCI6XCJEYW5pZWxzLU1hY0Jvb2stUHJvLTIubG9jYWxcIixcInJldXNhYmxlXCI6ZmFsc2UsXCJ2YWxpZGZvclwiOjEsXCJ1dWlkXCI6XCJlNjI1Y2I1Ny02NzY5LTQwMzQtODNiZS0zNzkxNmQ5YmMxMDRcIn0iLCJleHAiOiIxNDM2NDY2MzAyIn0.UXEDEbRqEWx5SdSpQjfowU56JubY5Yz2QN6cckby2es-g2P_n2lyAS6AwFeliBXyCDyVUelIT3g1QP4TdB9EEA"`
