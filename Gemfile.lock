@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    autosign (0.0.7)
+    autosign (0.0.9)
       deep_merge (~> 1)
       gli (~> 2)
       iniparse (~> 1)
