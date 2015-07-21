@@ -2,9 +2,18 @@
 require 'autosign'
 require 'logging'
 
+
+### Start logging
 @logger = Logging.logger['Autosign']
 @logger.level = :debug
+
+# Start logging to stdout first so we get errors while loading the config file
 @logger.add_appenders Logging.appenders.stdout
+
+# Load config and then add logfile as a log appender
+config = Autosign::Config.new
+@logger.add_appenders Logging.appenders.file(config.settings['general']['logfile']) unless config.settings['general']['logfile'].nil?
+### End logging initialization
 
 ### Get Inputs
 unless ARGV.count == 1
