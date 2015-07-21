@@ -81,9 +81,6 @@ module Autosign
       { 'general' =>
         {
           'loglevel'       => 'INFO',
-          'token_validity' => 7200,
-          'logfile'        => '/var/log/autosign.log',
-          'journalfile'    => '/var/log/autosign.journal',
         },
         'jwt_token' => {
           'validity' => 7200
