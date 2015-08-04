@@ -32,11 +32,7 @@ module Autosign
       end
 
       def password_list
-        return [] if settings['password'].nil?
-        passwords = settings['password']
-        return [passwords] if passwords.is_a?(String)
-        return passwords if passwords.is_a?(Array)
-        return []
+	Array(settings['password'])      
       end
 
     def validate_settings(settings)

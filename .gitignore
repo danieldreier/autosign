@@ -1,5 +1,6 @@
 html
 doc
+.bundle
 .vagrant
 .yardoc
 autosign.conf

@@ -86,11 +86,7 @@ module Autosign
       # or an empty array if none are specified.
       # @return [Array] of policy executables.
       def policy_executables
-        return [] if settings['external_policy_executable'].nil?
-        exec_list = settings['external_policy_executable']
-        return [exec_list] if exec_list.is_a?(String)
-        return exec_list if exec_list.is_a?(Array)
-        return []
+	Array(settings['external_policy_executable'])      
       end
 
 
