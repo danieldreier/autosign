@@ -142,16 +142,14 @@ module Autosign
       rescue
         raise Autosign::Token::Invalid
       end
-      certname  = JSON.parse(decoded["data"])["certname"]
-      requester = JSON.parse(decoded["data"])["requester"]
-      reusable  = JSON.parse(decoded["data"])["reusable"]
-      validfor  = JSON.parse(decoded["data"])["validfor"]
+      cert_data = JSON.parse(decoded["data"])
+      new_token = self.new(cert_data["certname"], cert_data["reusable"], cert_data["validfor"],
+                           cert_data["requester"], hmac_secret)
 
-      new_token = self.new(certname, reusable, validfor, requester, hmac_secret)
       new_token.validto = self.token_validto(token, hmac_secret)
-      new_token.uuid = JSON.parse(decoded["data"])["uuid"]
+      new_token.uuid = cert_data["uuid"]
 
-      return new_token
+      new_token
     end
 
     # Extract the expiration time, in seconds since epoch, from a signed token. Uses HMAC secret to validate the expiration time.
