@@ -19,6 +19,23 @@ Feature: Generate autosign key
      And the output should contain "valid until"
      And the exit status should be 0
 
+  Scenario: Generate new token using the --bare flag
+    Given a pre-shared key of "secret"
+      And a hostname of "foo.example.com"
+      And a file named "autosign.conf" with:
+      """
+      ---
+      jwt_token:
+        validity: '7200'
+        secret: 'secret'
+      """
+    When I run `chmod 600 autosign.conf`
+     And I run `autosign --config autosign.conf generate --bare foo.example.com`
+    Then the output should be a JSON web token
+     And the output should not contain "Autosign token for: foo.example.com"
+     And the output should not contain "valid until"
+     And the exit status should be 0
+
   Scenario: Generate new reusable token
     Given a pre-shared key of "secret"
       And a hostname of "foo.example.com"
