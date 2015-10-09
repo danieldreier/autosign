@@ -42,6 +42,9 @@ command :generate do |c|
   c.desc 'Generate a reusable token; default is to generate one-time tokens'
   c.switch [:r, :reusable]
 
+  c.desc 'Output only a bare token without the surrounding csr_attributes template'
+  c.switch [:b, :bare]
+
   c.desc 'autosign token validity period'
   c.default_value '7200'
   c.arg_name 'seconds'
@@ -58,12 +61,17 @@ command :generate do |c|
 
     help_now!('validfor setting must be an positive integer number of seconds') if !/\A\d+\z/.match(options['validfor'].to_s)
     token = Autosign::Token.new(certname, options['reusable'], options['validfor'].to_i, Socket.gethostname.to_s, global_options['secret'])
-    @logger.info "generated token for: " + certname
-    puts "Autosign token for: " + token.certname + ", valid until: " + Time.at(token.validto).to_s
-    puts "To use the token, put the following in ${puppet_confdir}/csr_attributes.yaml prior to running puppet agent for the first time:"
-    puts ""
-    puts "custom_attributes:"
-    puts "  challengePassword: \"#{token.sign.to_s}\""
+
+    if options[:bare]
+      puts token.sign.to_s
+    else
+      @logger.info "generated token for: " + certname
+      puts "Autosign token for: " + token.certname + ", valid until: " + Time.at(token.validto).to_s
+      puts "To use the token, put the following in ${puppet_confdir}/csr_attributes.yaml prior to running puppet agent for the first time:"
+      puts ""
+      puts "custom_attributes:"
+      puts "  challengePassword: \"#{token.sign.to_s}\""
+    end
   end
 end
 
