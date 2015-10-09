@@ -3,11 +3,11 @@ require File.join([File.dirname(__FILE__),'lib','autosign','version.rb'])
 spec = Gem::Specification.new do |s| 
   s.name = 'autosign'
   s.version = Autosign::VERSION
-  s.author = 'Your Name Here'
-  s.email = 'your@email.address.com'
-  s.homepage = 'http://your.website.com'
+  s.author = 'Daniel Dreier'
+  s.email = 'ddreier@thinkplango.com'
+  s.homepage = 'https://github.com/danieldreier/autosign'
   s.platform = Gem::Platform::RUBY
-  s.summary = 'A description of your project'
+  s.summary = 'Tooling to make puppet autosigning easy, secure, and extensible'
   s.files = `git ls-files`.split("
 ")
   s.require_paths << 'lib'
