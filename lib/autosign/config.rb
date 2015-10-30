@@ -2,7 +2,6 @@ require 'rbconfig'
 require 'securerandom'
 require 'deep_merge'
 require 'yaml'
-require 'safe_yaml'
 
 module Autosign
   # Exceptions namespace for Autosign class
@@ -39,7 +38,6 @@ module Autosign
       # set up logging
       @log = Logging.logger['Autosign::Config']
       @log.debug "initializing Autosign::Config"
-      SafeYAML::OPTIONS[:default_mode] = :safe
       # validate parameter
       raise 'settings is not a hash' unless settings_param.is_a?(Hash)
 
@@ -99,7 +97,7 @@ module Autosign
         if File.file?(file)
           @log.debug "Reading config file from: " + file
           config_file = File.read(file)
-          parsed_config_file = YAML.safe_load(config_file)
+          parsed_config_file = YAML.load(config_file)
           #parsed_config_file = IniParse.parse(config_file).to_hash
           @log.debug "configuration read from config file: " + parsed_config_file.to_s
           return parsed_config_file if parsed_config_file.is_a?(Hash)
