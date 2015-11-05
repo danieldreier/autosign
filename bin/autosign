@@ -66,9 +66,11 @@ command :generate do |c|
       puts token.sign.to_s
     else
       @logger.info "generated token for: " + certname
-      puts "Autosign token for: " + token.certname + ", valid until: " + Time.at(token.validto).to_s
-      puts "To use the token, put the following in ${puppet_confdir}/csr_attributes.yaml prior to running puppet agent for the first time:"
-      puts ""
+      unless global_options[:quiet]
+        puts "Autosign token for: " + token.certname + ", valid until: " + Time.at(token.validto).to_s
+        puts "To use the token, put the following in ${puppet_confdir}/csr_attributes.yaml prior to running puppet agent for the first time:"
+        puts ""
+      end
       puts "custom_attributes:"
       puts "  challengePassword: \"#{token.sign.to_s}\""
     end
