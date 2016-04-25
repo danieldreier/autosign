@@ -15,7 +15,7 @@ module Autosign
     # @param settings [Hash] config settings for the new journal instance
     # @return [Autosign::Journal] instance of the Autosign::Journal class
     def initialize(settings = {})
-      @log = Logging.logger['Autosign::Journal']
+      @log = Logging.logger('Autosign::Journal', {:date_pattern => '%Y-%m-%dT%H:%M:%S.%s'})
       @log.debug "initializing Autosign::Journal"
       @settings = settings
       fail unless setup
