@@ -36,7 +36,7 @@ module Autosign
     # @return [Autosign::Config] instance of the Autosign::Config class
     def initialize(settings_param = {})
       # set up logging
-      @log = Logging.logger['Autosign::Config']
+      @log = Logging.logger('Autosign::Config', {:date_pattern => '%Y-%m-%dT%H:%M:%S.%s'})
       @log.debug "initializing Autosign::Config"
       # validate parameter
       raise 'settings is not a hash' unless settings_param.is_a?(Hash)

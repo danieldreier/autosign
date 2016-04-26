@@ -9,7 +9,7 @@ module Autosign
     # @param csr[String] X509 format CSR
     # @return [Hash] hash containing :challenge_password and :common_name keys
     def self.decode_csr(csr)
-      @log = Logging.logger['Autosign::Decoder']
+      @log = Logging.logger('Autosign::Decoder', {:date_pattern => '%Y-%m-%dT%H:%M:%S.%s'})
       @log.debug "decoding CSR"
 
       begin
