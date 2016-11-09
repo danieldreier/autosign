@@ -132,7 +132,7 @@ module Autosign
     # Generate a default configuration file
     # As a convenience for the user, we can generate a default config file
     # This class is currently too tightly coupled with the JWT token validator
-    def self.generate_default()
+    def self.generate_default(settings_param = {})
       os_defaults = (
         case RbConfig::CONFIG['host_os']
         when /darwin|mac os/
@@ -189,8 +189,9 @@ module Autosign
 #          jwt_token.option(";password", 'another_static_autosign_password')
 #        end
 #      end.to_ini
-      raise Autosign::Exceptions::Error, "file #{os_defaults['confpath']} already exists, aborting" if File.file?(os_defaults['confpath'])
-      return os_defaults['confpath'] if File.write(os_defaults['confpath'], config.to_yaml)
+      config_file=settings_param['config_file'] || os_defaults['confpath']
+      raise Autosign::Exceptions::Error, "file #{config_file} already exists, aborting" if File.file?(config_file)
+      return config_file if File.write(config_file, config.to_yaml)
     end
   end
 end
