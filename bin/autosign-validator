@@ -14,8 +14,8 @@ require 'logging'
 config = Autosign::Config.new
 
 unless config.settings['general']['logfile'].nil?
-  file_layout = Logging.layouts.pattern(pattern: "%d %-5l -- %c : %m\n", date_pattern: "%Y-%m-%dT%H:%M:%S.%s")
-  @logger.add_appenders Logging.appenders.file(config.settings['general']['logfile'], layout: file_layout)
+  file_layout = Logging.layouts.pattern(:pattern => "%d %-5l -- %c : %m\n", :date_pattern => "%Y-%m-%dT%H:%M:%S.%s")
+  @logger.add_appenders Logging.appenders.file(config.settings['general']['logfile'], :layout => file_layout)
 end
 
 @logger.level = config.settings['general']['loglevel'].to_sym unless config.settings['general']['loglevel'].nil?

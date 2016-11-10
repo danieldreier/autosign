@@ -141,12 +141,12 @@ pre do |global,command,options,args|
   @logger.level = :info if global['verbose']
   @logger.level = :debug if global['debug']
 
-  stdout_layout = Logging.layouts.pattern(pattern: "%-5l -- %c : %m\n")
-  @logger.add_appenders Logging.appenders.stdout(layout: stdout_layout)
+  stdout_layout = Logging.layouts.pattern(:pattern => "%-5l -- %c : %m\n")
+  @logger.add_appenders Logging.appenders.stdout(:layout => stdout_layout)
 
   unless global['logfile'].nil?
-    file_layout = Logging.layouts.pattern(pattern: "%d %-5l -- %c : %m\n", date_pattern: "%Y-%m-%dT%H:%M:%S.%s")
-    @logger.add_appenders Logging.appenders.file(global['logfile'], layout: file_layout)
+    file_layout = Logging.layouts.pattern(:pattern => "%d %-5l -- %c : %m\n", :date_pattern => "%Y-%m-%dT%H:%M:%S.%s")
+    @logger.add_appenders Logging.appenders.file(global['logfile'], :layout => file_layout)
   end
 
   true
