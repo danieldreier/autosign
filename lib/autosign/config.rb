@@ -59,7 +59,7 @@ module Autosign
     def settings
       @log.debug "merging settings"
       setting_sources = [default_settings, configfile, @settings]
-      merged_settings = setting_sources.inject({}) { |merged, hash| merged.deep_merge(hash) }
+      merged_settings = setting_sources.inject({}) { |merged, hash| merged.deep_merge!(hash) }
       @log.debug "using merged settings: " + merged_settings.to_s
       return merged_settings
     end
