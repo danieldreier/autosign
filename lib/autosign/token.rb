@@ -56,7 +56,7 @@ module Autosign
     # @param hmac_secret [String] Password that the token was (hopefully) originally signed with.
     # @return [True, False] returns true if the token can be validated, or false if the token cannot be validated.
     def self.validate(requested_certname, token, hmac_secret)
-      @log = Logging.logger('Autosign::Token.validate', {:date_pattern => '%Y-%m-%dT%H:%M:%S.%s'})
+      @log = Logging.logger[self.class]
       @log.debug "attempting to validate token"
       @log.info "attempting to validate token for: #{requested_certname.to_s}"
       errors = []
