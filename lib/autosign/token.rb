@@ -33,8 +33,8 @@ module Autosign
     # @return [Autosign::Config] instance of the Autosign::Config class
     def initialize(certname, reusable=false, validfor=7200, requester, secret)
       # set up logging
-      @log = Logging.logger('Autosign::Token', {:date_pattern => '%Y-%m-%dT%H:%M:%S.%s'})
-      @log.debug "initializing"
+      @log = Logging.logger[self.class]
+      @log.debug "initializing #{self.class.name}"
 
       @validfor  = validfor
       @certname  = certname

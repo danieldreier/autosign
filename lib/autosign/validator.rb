@@ -92,7 +92,7 @@ module Autosign
     # @param raw_csr [String] the encoded X509 certificate signing request, as received by the autosign policy executable
     # @return [True, False] return true if the certificate should be signed, and false if it cannot be validated
     def self.any_validator(challenge_password, certname, raw_csr)
-      @log = Logging.logger(self.name, {:date_pattern => '%Y-%m-%dT%H:%M:%S.%s'})
+      @log = Logging.logger[self.class]
       # iterate over all known validators and attempt to validate using them
       results_by_validator = {}
       results = self.descendants.map {|c|
@@ -120,7 +120,7 @@ module Autosign
     # this is automatically called when the class is initialized; do not
     # override it in child classes.
     def start_logging
-      @log = Logging.logger("Autosign::Validator::" + self.name.to_s, {:date_pattern => '%Y-%m-%dT%H:%M:%S.%s'})
+      @log = Logging.logger[self.class]
       @log.debug "starting autosign validator: " + self.name.to_s
     end
 
