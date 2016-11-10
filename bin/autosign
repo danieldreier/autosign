@@ -134,8 +134,8 @@ pre do |global,command,options,args|
   # chosen command
   # Use skips_pre before a command to skip this block
   # on that command only
-#  config = Autosign::Config.new
-#  @logger.level = config.settings.to_hash['general']['loglevel'].to_sym unless config.settings.to_hash['general']['loglevel'].nil?
+  config = Autosign::Config.new
+  @logger.level = config.settings.to_hash['general']['loglevel'].to_sym unless config.settings.to_hash['general']['loglevel'].nil?
 
   @logger.level = :error if global['quiet']
   @logger.level = :info if global['verbose']
