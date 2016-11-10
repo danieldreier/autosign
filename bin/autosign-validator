@@ -15,7 +15,7 @@ config = Autosign::Config.new
 
 unless config.settings['general']['logfile'].nil?
   file_layout = Logging.layouts.pattern(pattern: "%d %-5l -- %c : %m\n", date_pattern: "%Y-%m-%dT%H:%M:%S.%s")
-  @logger.add_appenders Logging.appenders.file(global['logfile'], layout: file_layout)
+  @logger.add_appenders Logging.appenders.file(config.settings['general']['logfile'], layout: file_layout)
 end
 ### End logging initialization
 
