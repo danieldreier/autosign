@@ -112,7 +112,7 @@ command :config do |c|
   c.command :setup do |setup|
     setup.action do |global_options,options,args|
       @logger.info "setup command ran with #{global_options} #{options} #{args}"
-      result = Autosign::Config.generate_default
+      result = Autosign::Config.generate_default({'config_file' => global_options['config']})
       STDOUT.puts "generated default config file at #{result}" if result
     end
   end
