@@ -5,14 +5,21 @@ require 'logging'
 
 ### Start logging
 @logger = Logging.logger['Autosign']
-@logger.level = :debug
+@logger.level = :warn
 
 # Start logging to stdout first so we get errors while loading the config file
 @logger.add_appenders Logging.appenders.stdout
 
 # Load config and then add logfile as a log appender
 config = Autosign::Config.new
-@logger.add_appenders Logging.appenders.file(config.settings['general']['logfile']) unless config.settings['general']['logfile'].nil?
+
+unless config.settings['general']['logfile'].nil?
+  file_layout = Logging.layouts.pattern(:pattern => "%d %-5l -- %c : %m\n", :date_pattern => "%Y-%m-%dT%H:%M:%S.%s")
+  @logger.add_appenders Logging.appenders.file(config.settings['general']['logfile'], :layout => file_layout)
+end
+
+@logger.level = config.settings['general']['loglevel'].to_sym unless config.settings['general']['loglevel'].nil?
+
 ### End logging initialization
 
 ### Get Inputs

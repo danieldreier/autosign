@@ -36,8 +36,8 @@ module Autosign
     # @return [Autosign::Config] instance of the Autosign::Config class
     def initialize(settings_param = {})
       # set up logging
-      @log = Logging.logger('Autosign::Config', {:date_pattern => '%Y-%m-%dT%H:%M:%S.%s'})
-      @log.debug "initializing Autosign::Config"
+      @log = Logging.logger[self.class]
+      @log.debug "initializing #{self.class.name}"
       # validate parameter
       raise 'settings is not a hash' unless settings_param.is_a?(Hash)
 
@@ -59,7 +59,7 @@ module Autosign
     def settings
       @log.debug "merging settings"
       setting_sources = [default_settings, configfile, @settings]
-      merged_settings = setting_sources.inject({}) { |merged, hash| merged.deep_merge(hash) }
+      merged_settings = setting_sources.inject({}) { |merged, hash| merged.deep_merge!(hash) }
       @log.debug "using merged settings: " + merged_settings.to_s
       return merged_settings
     end

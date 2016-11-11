@@ -134,17 +134,19 @@ pre do |global,command,options,args|
   # chosen command
   # Use skips_pre before a command to skip this block
   # on that command only
-#  config = Autosign::Config.new
-#  @logger.level = config.settings.to_hash['general']['loglevel'].to_sym unless config.settings.to_hash['general']['loglevel'].nil?
+  config = Autosign::Config.new
+  @logger.level = config.settings.to_hash['general']['loglevel'].to_sym unless config.settings.to_hash['general']['loglevel'].nil?
 
   @logger.level = :error if global['quiet']
   @logger.level = :info if global['verbose']
   @logger.level = :debug if global['debug']
 
-  if global['logfile'].nil?
-    @logger.add_appenders Logging.appenders.stdout
-  else
-    @logger.add_appenders Logging.appenders.stdout, Logging.appenders.file(global['logfile'])
+  stdout_layout = Logging.layouts.pattern(:pattern => "%-5l -- %c : %m\n")
+  @logger.add_appenders Logging.appenders.stdout(:layout => stdout_layout)
+
+  unless global['logfile'].nil?
+    file_layout = Logging.layouts.pattern(:pattern => "%d %-5l -- %c : %m\n", :date_pattern => "%Y-%m-%dT%H:%M:%S.%s")
+    @logger.add_appenders Logging.appenders.file(global['logfile'], :layout => file_layout)
   end
 
   true

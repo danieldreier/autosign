@@ -33,8 +33,8 @@ module Autosign
     # @return [Autosign::Config] instance of the Autosign::Config class
     def initialize(certname, reusable=false, validfor=7200, requester, secret)
       # set up logging
-      @log = Logging.logger('Autosign::Token', {:date_pattern => '%Y-%m-%dT%H:%M:%S.%s'})
-      @log.debug "initializing"
+      @log = Logging.logger[self.class]
+      @log.debug "initializing #{self.class.name}"
 
       @validfor  = validfor
       @certname  = certname
@@ -56,7 +56,7 @@ module Autosign
     # @param hmac_secret [String] Password that the token was (hopefully) originally signed with.
     # @return [True, False] returns true if the token can be validated, or false if the token cannot be validated.
     def self.validate(requested_certname, token, hmac_secret)
-      @log = Logging.logger('Autosign::Token.validate', {:date_pattern => '%Y-%m-%dT%H:%M:%S.%s'})
+      @log = Logging.logger[self.class]
       @log.debug "attempting to validate token"
       @log.info "attempting to validate token for: #{requested_certname.to_s}"
       errors = []
