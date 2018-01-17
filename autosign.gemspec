@@ -31,5 +31,5 @@ spec = Gem::Specification.new do |s|
   s.add_runtime_dependency('json', '>=1')
   s.add_runtime_dependency('deep_merge', '~> 1')
   s.add_runtime_dependency('require_all', '~> 1')
-  s.add_runtime_dependency('yard', '~> 0.8')
+  s.add_runtime_dependency('yard', '~> 0.9.11')
 end
