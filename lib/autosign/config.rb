@@ -42,7 +42,7 @@ module Autosign
       raise 'settings is not a hash' unless settings_param.is_a?(Hash)
 
       # look in the following places for a config file
-      @config_file_paths = ['/etc/autosign.conf', '/usr/local/etc/autosign.conf']
+      @config_file_paths = ['/etc/puppetlabs/puppetserver/autosign.conf', '/etc/autosign.conf', '/usr/local/etc/autosign.conf']
 
       # HOME is unset when puppet runs, so we need to only use it if it's set
       @config_file_paths << File.join(Dir.home, '.autosign.conf') unless ENV['HOME'].nil?
