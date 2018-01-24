@@ -23,8 +23,12 @@ module Autosign
       end
 
       # extract challenge password
-
-      challenge_password = csr.attributes.find { |a| a.oid == 'challengePassword' }.value.value.first.value.to_s
+      challenge_attr = csr.attributes.find { |a| a.oid == 'challengePassword' }
+      challenge_password = if challenge_attr
+                             challenge_attr.value.value.first.value.to_s
+                           else
+                             nil
+                           end
 
       # extract common name
       common_name = /^\/CN=(\S*)$/.match(csr.subject.to_s)[1]
