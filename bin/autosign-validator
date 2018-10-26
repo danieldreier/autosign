@@ -2,6 +2,8 @@
 require 'autosign'
 require 'logging'
 
+### Read all the arugments https://tickets.puppetlabs.com/browse/SERVER-1116
+argf_read = ARGF.read
 
 ### Start logging
 @logger = Logging.logger['Autosign']
