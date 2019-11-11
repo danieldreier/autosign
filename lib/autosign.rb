@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'json'
+require 'multi_json'
 require 'autosign/version.rb'
 require 'autosign/token.rb'
 require 'autosign/config.rb'

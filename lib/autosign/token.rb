@@ -1,6 +1,6 @@
 module Autosign
   require 'jwt'
-  require 'json'
+  require 'multi_json'
   require 'securerandom'
 
   # Class modeling JSON Web Tokens as credentials for certificate auto signing.
@@ -62,7 +62,7 @@ module Autosign
       errors = []
       begin
         @log.debug "Decoding and parsing token"
-        data = JSON.parse(JWT.decode(token, hmac_secret)[0]["data"])
+        data = MultiJson.load(JWT.decode(token, hmac_secret)[0]["data"])
       rescue JWT::ExpiredSignature
         @log.warn "Token has an expired signature"
         errors << "Expired Signature"
@@ -142,7 +142,7 @@ module Autosign
       rescue
         raise Autosign::Token::Invalid
       end
-      cert_data = JSON.parse(decoded["data"])
+      cert_data = MultiJson.load(decoded["data"])
       new_token = self.new(cert_data["certname"], cert_data["reusable"], cert_data["validfor"],
                            cert_data["requester"], hmac_secret)
 
@@ -186,7 +186,7 @@ module Autosign
     end
 
     def to_json
-      JSON.generate to_hash
+      MultiJson.dump to_hash
     end
 
   end
