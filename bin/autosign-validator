@@ -24,6 +24,9 @@ end
 ### Get Inputs
 unless ARGV.count == 1
   @logger.error "This executable must be called with a certname as the only parameter and with an X509 CSR piped into STDIN"
+
+  ### Read all the arguments https://tickets.puppetlabs.com/browse/SERVER-1116
+  ARGF.read
   exit 1
 end
 
