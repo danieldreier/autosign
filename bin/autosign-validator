@@ -2,6 +2,7 @@
 require 'autosign'
 require 'logging'
 
+### Ensure stdin is read https://tickets.puppetlabs.com/browse/SERVER-1116
 raw_csr = $stdin.read
 
 ### Start logging
