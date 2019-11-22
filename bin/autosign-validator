@@ -2,8 +2,8 @@
 require 'autosign'
 require 'logging'
 
-### Read all the arugments https://tickets.puppetlabs.com/browse/SERVER-1116
-argf_read = ARGF.read
+### Ensure stdin is read https://tickets.puppetlabs.com/browse/SERVER-1116
+raw_csr = $stdin.read
 
 ### Start logging
 @logger = Logging.logger['Autosign']
@@ -30,11 +30,10 @@ unless ARGV.count == 1
   exit 1
 end
 
-certname = ARGV[0]
+certname = ARGV.shift
 @logger.debug "certname is " + certname
 
 @logger.debug "reading CSR from stdin"
-raw_csr = $stdin.read
 csr = Autosign::Decoder.decode_csr(raw_csr)
 exit 1 unless csr.is_a?(Hash)
 
