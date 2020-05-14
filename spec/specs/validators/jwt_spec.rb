@@ -28,7 +28,7 @@ context Autosign::Validators::JWT do
   context 'class methods' do
     describe '.new' do
       it 'requires no parameters' do
-        expect { Autosign::Validators::JWT.new() }.to_not raise_error
+        expect { Autosign::Validators::JWT.new }.to_not raise_error
       end
     end
   end

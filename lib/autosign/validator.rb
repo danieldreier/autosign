@@ -16,12 +16,12 @@ module Autosign
   # @return [Autosign::Validator] instance of the Autosign::Validator class
   class Validator
     def initialize()
-      start_logging()
-      settings() # just run to validate settings
-      setup()
+      start_logging
+      settings # just run to validate settings
+      setup
       # call name to ensure that the class fails immediately if child classes
       # do not implement it.
-      name()
+      name
     end
 
     # Name of the validator. This must be implemented by validators which
@@ -96,7 +96,7 @@ module Autosign
       # iterate over all known validators and attempt to validate using them
       results_by_validator = {}
       results = self.descendants.map {|c|
-        validator = c.new()
+        validator = c.new
         @log.debug "attempting to validate using #{validator.name}"
         result = validator.validate(challenge_password, certname, raw_csr)
         results_by_validator[validator.name] = result

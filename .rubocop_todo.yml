@@ -458,15 +458,6 @@ Style/IfUnlessModifier:
   Exclude:
     - 'lib/autosign/token.rb'
 
-# Offense count: 7
-# Cop supports --auto-correct.
-# Configuration parameters: IgnoredMethods.
-Style/MethodCallWithoutArgsParentheses:
-  Exclude:
-    - 'lib/autosign/validator.rb'
-    - 'spec/specs/validators/jwt_spec.rb'
-    - 'spec/specs/validators/passwordlist_spec.rb'
-
 # Offense count: 1
 Style/MixinUsage:
   Exclude:
