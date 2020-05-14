@@ -20,6 +20,7 @@ GEM
       ffi (~> 1.9)
       rspec-expectations (>= 2.99)
       thor (~> 0.19)
+    ast (2.4.0)
     builder (3.2.3)
     childprocess (3.0.0)
     coderay (1.1.2)
@@ -61,6 +62,9 @@ GEM
     method_source (0.9.2)
     multi_json (1.14.1)
     multi_test (0.1.2)
+    parallel (1.19.1)
+    parser (2.7.1.2)
+      ast (~> 2.4.0)
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
@@ -68,9 +72,11 @@ GEM
       facter (> 1.6, < 3)
       hiera (~> 1.0)
       json_pure
+    rainbow (3.0.0)
     rake (10.5.0)
     rdoc (4.3.0)
     require_all (1.5.0)
+    rexml (3.2.4)
     rspec (3.9.0)
       rspec-core (~> 3.9.0)
       rspec-expectations (~> 3.9.0)
@@ -84,6 +90,14 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.9.0)
     rspec-support (3.9.0)
+    rubocop (0.83.0)
+      parallel (~> 1.10)
+      parser (>= 2.7.0.1)
+      rainbow (>= 2.2.2, < 4.0)
+      rexml
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (>= 1.4.0, < 2.0)
+    ruby-progressbar (1.10.1)
     simplecov (0.16.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)
@@ -93,6 +107,7 @@ GEM
       tins (~> 1.0)
     thor (0.20.3)
     tins (1.22.2)
+    unicode-display_width (1.7.0)
     yard (0.9.20)
 
 PLATFORMS
@@ -108,6 +123,7 @@ DEPENDENCIES
   rake (~> 10)
   rdoc (~> 4)
   rspec (~> 3)
+  rubocop (~> 0.83.0)
   yard (~> 0.9.11)
 
 BUNDLED WITH
