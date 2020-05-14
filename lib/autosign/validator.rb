@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'logging'
 require 'require_all'
 
@@ -15,13 +17,13 @@ module Autosign
   #
   # @return [Autosign::Validator] instance of the Autosign::Validator class
   class Validator
-    def initialize()
-      start_logging()
-      settings() # just run to validate settings
-      setup()
+    def initialize
+      start_logging
+      settings # just run to validate settings
+      setup
       # call name to ensure that the class fails immediately if child classes
       # do not implement it.
-      name()
+      name
     end
 
     # Name of the validator. This must be implemented by validators which
@@ -55,7 +57,7 @@ module Autosign
     # @param certname [String] the common name being requested in the certificate signing request. Treat the certname as untrusted. This is user-submitted data that you must validate.
     # @param raw_csr [String] the encoded X509 certificate signing request, as received by the autosign policy executable. This is provided as an optional extension point, but your validator may not need to use it.
     # @return [True, False] return true if the certificate should be signed, and false if you cannot validate the request successfully.
-    def perform_validation(challenge_password, certname, raw_csr)
+    def perform_validation(_challenge_password, _certname, _raw_csr)
       # override this after inheriting
       # should return true to indicate success validating
       # or false to indicate that the validator was unable to validate
@@ -66,52 +68,50 @@ module Autosign
     # Do not override or use this class in child classes. This is the class that gets called
     # on validator objects.
     def validate(challenge_password, certname, raw_csr)
-      @log.debug "running validate"
-      fail unless challenge_password.is_a?(String)
-      fail unless certname.is_a?(String)
+      @log.debug "attempting to validate using #{name}"
+      raise unless challenge_password.is_a?(String)
+      raise unless certname.is_a?(String)
 
       case perform_validation(challenge_password, certname, raw_csr)
       when true
-        @log.debug "validated successfully"
+        @log.debug 'validated successfully'
         @log.info  "Validated '#{certname}' using '#{name}' validator"
-        return true
+        true
       when false
-        @log.debug "validation failed"
+        @log.debug 'validation failed'
         @log.debug "Unable to validate '#{certname}' using '#{name}' validator"
-        return false
+        false
       else
-        @log.error "perform_validation returned a non-boolean result"
-        raise "perform_validation returned a non-boolean result"
+        @log.error 'perform_validation returned a non-boolean result'
+        raise 'perform_validation returned a non-boolean result'
       end
     end
 
+    # @return [Array] - A list of all the validator classes
+    # This is used for better documention and also future expansion if we want to
+    # order the list or allow the user to manipulate which validators are used.
+    def self.validators
+      descendants
+    end
+
+    # @summary
     # Class method to attempt validation of a request against all validators which inherit from this class.
     # The request is considered to be validated if any one validator succeeds.
+    # The first validator to pass shorts the validation process so other validators are not called.
     # @param challenge_password [String] the challenge_password OID from the certificate signing request
     # @param certname [String] the common name being requested in the certificate signing request
     # @param raw_csr [String] the encoded X509 certificate signing request, as received by the autosign policy executable
-    # @return [True, False] return true if the certificate should be signed, and false if it cannot be validated
+    # @return [Boolean] return true if the certificate should be signed, and false if it cannot be validated
     def self.any_validator(challenge_password, certname, raw_csr)
       @log = Logging.logger[self.class]
-      # iterate over all known validators and attempt to validate using them
-      results_by_validator = {}
-      results = self.descendants.map {|c|
-        validator = c.new()
-        @log.debug "attempting to validate using #{validator.name}"
-        result = validator.validate(challenge_password, certname, raw_csr)
-        results_by_validator[validator.name] = result
-        @log.debug "result: #{result.to_s}"
-        result
-      }
-      @log.debug "validator results: " + results.to_s
-      @log.info "results by validator: " + results_by_validator.to_s
-      success = results.any?{|result| result == true}
-      if success
-        @log.info "successfully validated using one or more validators"
-        return true
+      # find the first validator that passes
+      validator = validators.find { |c| c.new.validate(challenge_password, certname, raw_csr) }
+      if validator
+        @log.info "Successfully validated using #{validator.name}"
+        true
       else
-        @log.info "unable to validate using any validator"
-        return false
+        @log.info 'unable to validate using any validator'
+        false
       end
     end
 
@@ -121,7 +121,7 @@ module Autosign
     # override it in child classes.
     def start_logging
       @log = Logging.logger[self.class]
-      @log.debug "starting autosign validator: " + self.name.to_s
+      @log.debug 'starting autosign validator: ' + name.to_s
     end
 
     # (optionally) override this method in validator child classes to perform any additional
@@ -151,18 +151,18 @@ module Autosign
     #
     # @return [Hash] of config settings
     def settings
-      @log.debug "merging settings"
+      @log.debug 'merging settings'
       setting_sources = [get_override_settings, load_config, default_settings]
       merged_settings = setting_sources.inject({}) { |merged, hash| merged.deep_merge(hash) }
-      @log.debug "using merged settings: " + merged_settings.to_s
-      @log.debug "validating merged settings"
+      @log.debug 'using merged settings: ' + merged_settings.to_s
+      @log.debug 'validating merged settings'
       if validate_settings(merged_settings)
-        @log.debug "successfully validated merged settings"
-        return merged_settings
+        @log.debug 'successfully validated merged settings'
+        merged_settings
       else
-        @log.warn "validation of merged settings failed"
-        @log.warn "unable to validate settings in #{self.name} validator"
-        raise "settings validation error"
+        @log.warn 'validation of merged settings failed'
+        @log.warn "unable to validate settings in #{name} validator"
+        raise 'settings validation error'
       end
     end
 
@@ -178,7 +178,6 @@ module Autosign
       {}
     end
 
-
     # (optionally) override this to perform validation checks on the merged
     # config hash of default settings, config file settings, and override
     # settings.
@@ -191,16 +190,16 @@ module Autosign
     # Do not override this in child classes.
     # @return [Hash] configuration settings from the validator's section of the config file
     def load_config
-      @log.debug "loading validator-specific configuration"
+      @log.debug 'loading validator-specific configuration'
       config = Autosign::Config.new
 
-      if config.settings.to_hash[self.name].nil?
-        @log.warn "Unable to load validator-specific configuration"
-        @log.warn "Cannot load configuration section named '#{self.name}'"
-        return {}
+      if config.settings.to_hash[name].nil?
+        @log.warn 'Unable to load validator-specific configuration'
+        @log.warn "Cannot load configuration section named '#{name}'"
+        {}
       else
-        @log.debug "Set validator-specific settings from config file: " + config.settings.to_hash[self.name].to_s
-        return config.settings.to_hash[self.name]
+        @log.debug 'Set validator-specific settings from config file: ' + config.settings.to_hash[name].to_s
+        config.settings.to_hash[name]
       end
     end
 
@@ -212,7 +211,6 @@ module Autosign
     def get_override_settings
       {}
     end
-
   end
 end
 
