@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module Autosign
   module Validators
-
     # The multiplexer validator sends the same request received by the autosign
     # executable to one or more external executables. The purpose is to allow
     # one or more existing autosign scripts to be used in conjunction with the
@@ -26,14 +27,7 @@ module Autosign
     #   # requests will only be validated by the multiplexer validator if they
     #   # are validated by both external policy executables.
     class Multiplexer < Autosign::Validator
-
-      # set the user-friendly name of the Multiplexer validator.
-      # This name is used to specify that configuration should come from the
-      # [multiplexer] section of the autosign.conf file.
-      # @return [String] name of the validator
-      def name
-        "multiplexer"
-      end
+      NAME = 'multiplexer'
 
       private
 
@@ -42,25 +36,24 @@ module Autosign
       # @param certname [String] certname requested in the CSR
       # @param raw_csr [String] X509 certificate signing request as received by the policy executable
       # @return [True, False] returns true to indicate successful validation, and false to indicate failure to validate
-      def perform_validation(token, certname, raw_csr)
+      def perform_validation(_token, certname, raw_csr)
         results = []
-        @log.debug "validating using multiplexed external executables"
-        policy_executables.each {|executable|
-          @log.debug "attempting to validate using #{executable.to_s}"
-          results << IO.popen(executable + ' ' + certname.to_s, 'r+') {|obj| obj.puts raw_csr; obj.close_write; obj.read; obj.close; $?.to_i }
-          @log.debug "exit code from #{executable.to_s}: #{results.last}"
-        }
-        bool_results = results.map {|val| val == 0}
-        return validate_using_strategy(bool_results)
+        @log.debug 'validating using multiplexed external executables'
+        policy_executables.each do |executable|
+          @log.debug "attempting to validate using #{executable}"
+          results << IO.popen(executable + ' ' + certname.to_s, 'r+') { |obj| obj.puts raw_csr; obj.close_write; obj.read; obj.close; $CHILD_STATUS.to_i }
+          @log.debug "exit code from #{executable}: #{results.last}"
+        end
+        bool_results = results.map { |val| val == 0 }
+        validate_using_strategy(bool_results)
       end
-
 
       # set the default validation strategy to "any", succeeding if any one
       # external autosign script succeeds.
       # @return [Hash] config hash to be merged in with config file settings and overrides.
       def default_settings
         {
-          'strategy' => 'any',
+          'strategy' => 'any'
         }
       end
 
@@ -72,13 +65,13 @@ module Autosign
         case settings['strategy']
         when 'any'
           @log.debug "validating using 'any' strategy"
-          return array.any?
+          array.any?
         when 'all'
           @log.debug "validating using 'all' strategy"
-          return array.all?
+          array.all?
         else
-          @log.error "unable to validate; unknown strategy"
-          return false
+          @log.error 'unable to validate; unknown strategy'
+          false
         end
       end
 
@@ -86,25 +79,23 @@ module Autosign
       # or an empty array if none are specified.
       # @return [Array] of policy executables.
       def policy_executables
-	Array(settings['external_policy_executable'])      
+        Array(settings['external_policy_executable'])
       end
-
 
       # validate that settins are reasonable. Validation strategy must be
       # either any or all.
       # @param settings [Hash] config settings hash
       # @return [True, False] true if settings validate successfully, false otherwise
       def validate_settings(settings)
-        @log.debug "validating settings: " + settings.to_s
-        unless ['any', 'all'].include? settings['strategy']
+        @log.debug 'validating settings: ' + settings.to_s
+        unless %w[any all].include? settings['strategy']
           @log.error "strategy setting must be set to 'any' or 'all'"
           return false
         end
 
-        @log.debug "done validating settings"
+        @log.debug 'done validating settings'
         true
       end
-
     end
   end
 end

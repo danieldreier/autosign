@@ -26,27 +26,10 @@ module Autosign
       name
     end
 
-    # Name of the validator. This must be implemented by validators which
-    # inherit from the Autosign::Validator class. The name is used to identify
-    # the validator in friendly messages and to determine which configuration
-    # file section settings will be loaded from.
-    #
-    # @example set the name of a child class validator to "example"
-    #    module Autosign
-    #      module Validators
-    #        class Example < Autosign::Validator
-    #          def name
-    #           "example"
-    #          end
-    #        end
-    #      end
-    #    end
     # @return [String] name of the validator. Do not use special characters.
+    # You must set the NAME constant in the sublcass
     def name
-      # override this after inheriting
-      # should return a string with no spaces
-      # this is the name used to reference the validator in config files
-      raise NotImplementedError
+      self.class::NAME
     end
 
     # define how a validator actually validates the request.
@@ -88,10 +71,18 @@ module Autosign
     end
 
     # @return [Array] - A list of all the validator classes
-    # This is used for better documention and also future expansion if we want to
-    # order the list or allow the user to manipulate which validators are used.
-    def self.validators
-      descendants
+    # @param list [Array] - a list of validators to use, uses the settings list by default
+    # This returns a list of validators that were specified by the user and the exact
+    # order they want the validation to procede.
+    def self.validators(list = nil)
+      validation_order = list || Autosign::Config.new.settings['general']['validation_order']
+      # create a key pair where the key is the name of the validator and value is the class
+      validator_list = descendants.each_with_object({}) do |klass, acc|
+        acc[klass::NAME] = klass
+        acc
+      end
+      # filter out validators that do not exist
+      validation_order.map { |v| validator_list.fetch(v, nil) }.compact
     end
 
     # @summary
@@ -104,10 +95,10 @@ module Autosign
     # @return [Boolean] return true if the certificate should be signed, and false if it cannot be validated
     def self.any_validator(challenge_password, certname, raw_csr)
       @log = Logging.logger[self.class]
-      # find the first validator that passes
+      # find the first validator that passes and return the class
       validator = validators.find { |c| c.new.validate(challenge_password, certname, raw_csr) }
       if validator
-        @log.info "Successfully validated using #{validator.name}"
+        @log.info "Successfully validated using #{validator::NAME}"
         true
       else
         @log.info 'unable to validate using any validator'
