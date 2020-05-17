@@ -21,7 +21,7 @@ context Autosign::Validators::Passwordlist do
   context 'class methods' do
     describe '.new' do
       it 'requires no parameters' do
-        expect { Autosign::Validators::Passwordlist.new() }.to_not raise_error
+        expect { Autosign::Validators::Passwordlist.new }.to_not raise_error
       end
     end
   end
