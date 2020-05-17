@@ -1,6 +1,6 @@
 require 'spec_helper'
 require 'securerandom'
-
+require 'autosign/validators/jwt'
 context Autosign::Validators::JWT do
   let(:certname)  { 'host.example.com' }
   let(:validator) { Autosign::Validators::JWT.new }

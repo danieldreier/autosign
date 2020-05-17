@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require 'autosign/validators/validator_base'
 module Autosign
   module Validators
     # Validate certificate signing requests using a simple password list.
@@ -13,7 +13,7 @@ module Autosign
     #   password = opensesame
     #   password = CPE1704TKS
     #
-    class Passwordlist < Autosign::Validator
+    class Passwordlist < Autosign::Validators::ValidatorBase
       NAME = 'password_list'
 
       private

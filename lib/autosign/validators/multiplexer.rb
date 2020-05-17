@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'autosign/validators/validator_base'
 
 module Autosign
   module Validators
@@ -26,7 +27,7 @@ module Autosign
     #     external_policy_executable = /usr/local/bin/another-autosign-script.rb
     #   # requests will only be validated by the multiplexer validator if they
     #   # are validated by both external policy executables.
-    class Multiplexer < Autosign::Validator
+    class Multiplexer < Autosign::Validators::ValidatorBase
       NAME = 'multiplexer'
 
       private

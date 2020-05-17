@@ -41,18 +41,24 @@ describe Autosign::Validator do
     allow_any_instance_of(Autosign::Config).to receive(:settings).and_return(config)
   end
 
+  it 'decendents does not include base validator' do
+    # the load order will be random at times so we need to sort in order validate we have the right classes
+    expect(Autosign::Validator.validator_classes.map(&:to_s).sort)
+    .to eq(["Autosign::Validators::JWT", "Autosign::Validators::Multiplexer", "Autosign::Validators::Passwordlist"])
+  end
+
   it 'token is not reusable' do
     expect(Autosign::Validator.any_validator(one_time_token, certname, csr)).to be true
     expect(Autosign::Validator.any_validator(one_time_token, certname, csr)).to be false
   end
 
   it do
-    expect(Autosign::Validator.validators).to eq [Autosign::Validators::JWT,
+    expect(Autosign::Validator.validation_order).to eq [Autosign::Validators::JWT,
                                                   Autosign::Validators::Multiplexer, Autosign::Validators::Passwordlist]
   end
 
   it do
-    expect(Autosign::Validator.validators(['jwt_token'])).to eq [Autosign::Validators::JWT]                                           
+    expect(Autosign::Validator.validation_order(['jwt_token'])).to eq [Autosign::Validators::JWT]                                           
   end
 
   context 'reduced list of validators' do
@@ -63,7 +69,7 @@ describe Autosign::Validator do
     end
 
     it do
-      expect(Autosign::Validator.validators).to eq [Autosign::Validators::JWT,
+      expect(Autosign::Validator.validation_order).to eq [Autosign::Validators::JWT,
                                                     Autosign::Validators::Passwordlist]
     end
   end
@@ -76,7 +82,7 @@ describe Autosign::Validator do
     end
 
     it do
-      expect(Autosign::Validator.validators).to eq [Autosign::Validators::Passwordlist]
+      expect(Autosign::Validator.validation_order).to eq [Autosign::Validators::Passwordlist]
     end
   end
 end

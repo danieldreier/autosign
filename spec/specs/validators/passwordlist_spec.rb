@@ -1,6 +1,6 @@
 require 'spec_helper'
 require 'securerandom'
-
+require 'autosign/validators/passwordlist'
 context Autosign::Validators::Passwordlist do
   let(:certname)  { 'host.example.com' }
   let(:validator) { Autosign::Validators::Passwordlist.new }

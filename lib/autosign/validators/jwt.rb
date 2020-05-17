@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'autosign/validators/validator_base'
 
 module Autosign
   module Validators
@@ -8,7 +9,7 @@ module Autosign
     # the same as on the validating system. The validator also checks that the
     # token has not expired, and that one-time (non-reusable) tokens have not
     # been previously used.
-    class JWT < Autosign::Validator
+    class JWT < Autosign::Validators::ValidatorBase
       NAME = 'jwt_token'
 
       private
