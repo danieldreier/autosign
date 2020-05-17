@@ -81,6 +81,40 @@ password_list:
 
 Note that this is a relatively insecure way to do certificate autosigning. Using one-time tokens via the `autosign generate` command is more secure. This functionality is provided to grandfather in existing use cases to ease the transition.
 
+## Validation order
+By default the validation runs the following validators in order: 
+
+1. jwt_token
+2. password_list
+3. multiplexer
+
+The first validator to succeed wins and short circuits the validaiton process.
+
+You can completely customize the list and how they are ordered via the configuration file.
+
+```
+---
+general:
+  loglevel: debug
+  logfile: "/var/log/autosign.log"
+  validation_order: 
+    - jwt_token
+    - multiplexer
+    - password_list
+jwt_token:
+  secret: J7/WjmkC/CJp2K0/8+sktzSgCqQ=
+  validity: '7200'
+  journalfile: "/root/var/autosign/autosign.journal"
+```
+
+The validation_order config is an ordered array and since the validators will only match the first validation
+to succeed the validation script should occur as fast as you want.  
+
+Additionally, if you omit any validator that validator will not be used during the validation process.  This might 
+be important if you wanted to only use special validators or remove unwanted validator execution.
+
+Please note, the name of the validator which is speficed by the `NAME` constant in the validator code must match
+the list you specify otherwise it will not be part of the validation process.
 
 ### Troubleshooting
 If you're having problems, try the following:
