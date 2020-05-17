@@ -4,10 +4,12 @@ before_install: rm Gemfile.lock || true
 cache: bundler
 sudo: false
 rvm:
-  - 2.0.0
-  - 2.1.5
-  - 2.2.2
-  - 2.3.0
+  - 2.2.9
+  - 2.3.8
+  - 2.4.10
+  - 2.5.8
+  - 2.6.6
+  - 2.7.1
 deploy:
   provider: rubygems
   api_key:
