@@ -9,15 +9,18 @@ module Autosign
     # @param list [Array] - a list of validators to use, uses the settings list by default
     # This returns a list of validators that were specified by the user and the exact
     # order they want the validation to procede.
-    def self.validation_order(list = nil)
-      validation_order = list || Autosign::Config.new.settings['general']['validation_order']
+    def self.validation_order(settings = Autosign::Config.new.settings, list = nil)
+      validation_order = list || settings['general']['validation_order']
       # create a key pair where the key is the name of the validator and value is the class
       validator_list = validator_classes.each_with_object({}) do |klass, acc|
         acc[klass::NAME] = klass
         acc
       end
       # filter out validators that do not exist
-      validation_order.map { |v| validator_list.fetch(v, nil) }.compact
+      order = validation_order.map { |v| validator_list.fetch(v, nil) }.compact
+      @log = Logging.logger[self.class]
+      @log.debug("Validator order: #{order.inspect}")
+      order
     end
 
     # @summary
@@ -28,10 +31,10 @@ module Autosign
     # @param certname [String] the common name being requested in the certificate signing request
     # @param raw_csr [String] the encoded X509 certificate signing request, as received by the autosign policy executable
     # @return [Boolean] return true if the certificate should be signed, and false if it cannot be validated
-    def self.any_validator(challenge_password, certname, raw_csr)
+    def self.any_validator(challenge_password, certname, raw_csr, settings = Autosign::Config.new.settings)
       @log = Logging.logger[self.class]
       # find the first validator that passes and return the class
-      validator = validation_order.find { |c| c.new.validate(challenge_password, certname, raw_csr) }
+      validator = validation_order(settings).find { |c| c.new(settings).validate(challenge_password, certname, raw_csr) }
       if validator
         @log.info "Successfully validated using #{validator::NAME}"
         true

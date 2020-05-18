@@ -41,7 +41,7 @@ exit 1 unless csr.is_a?(Hash)
 ### End Inputs
 
 ### validate token
-token_validation = Autosign::Validator.any_validator(csr[:challenge_password].to_s, certname.to_s, raw_csr)
+token_validation = Autosign::Validator.any_validator(csr[:challenge_password].to_s, certname.to_s, raw_csr, config.settings)
 ### end validation
 
 ### Exit with correct exit status

@@ -18,8 +18,10 @@ module Autosign
     # @return Autosign::Validators::ValidatorBase instance of the Autosign::Validators::ValidatorBase class
     class ValidatorBase
       NAME = 'base'
+      attr_reader :config_file_settings
 
-      def initialize
+      def initialize(config_file_settings = nil)
+        @config_file_settings = config_file_settings
         start_logging
         settings # just run to validate settings
         setup
@@ -100,9 +102,9 @@ module Autosign
     #
     # @return [Hash] of config settings
     def settings
-      @log.debug 'merging settings'
+      @log.debug "merging settings for #{name} validator"
       setting_sources = [get_override_settings, load_config, default_settings]
-      merged_settings = setting_sources.inject({}) { |merged, hash| merged.deep_merge(hash) }
+      merged_settings = setting_sources.inject({}) { |merged, hash| merged.deep_merge(hash, {:overwrite_arrays => true}) }
       @log.debug 'using merged settings: ' + merged_settings.to_s
       @log.debug 'validating merged settings'
       if validate_settings(merged_settings)
@@ -140,15 +142,14 @@ module Autosign
     # @return [Hash] configuration settings from the validator's section of the config file
     def load_config
       @log.debug 'loading validator-specific configuration'
-      config = Autosign::Config.new
-
-      if config.settings.to_hash[name].nil?
+      config_settings = @config_file_settings ||= Autosign::Config.new.settings
+      if config_settings.to_hash[name].nil?
         @log.warn 'Unable to load validator-specific configuration'
         @log.warn "Cannot load configuration section named '#{name}'"
         {}
       else
-        @log.debug 'Set validator-specific settings from config file: ' + config.settings.to_hash[name].to_s
-        config.settings.to_hash[name]
+        @log.debug 'Set validator-specific settings from config file: ' + config_settings.to_hash[name].to_s
+        config_settings.to_hash[name]
       end
     end
 

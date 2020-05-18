@@ -4,6 +4,12 @@ require 'spec_helper'
 require 'securerandom'
 
 describe Autosign::Validator do
+
+  let(:config_obj) { Autosign::Config.new(settings) }
+  let(:settings) do
+    {'config_file' => File.join(fixtures_dir, 'settings_file.yaml') }
+  end
+
   let(:certname) { 'foo.example.com' }
   let(:one_time_token) { Autosign::Token.new(certname, false, 3600, 'rspec_test', 'secret').sign }
   let(:reusable_token) { Autosign::Token.new(certname,  true, 3600, 'rspec_test', 'secret').sign }
@@ -58,7 +64,7 @@ describe Autosign::Validator do
   end
 
   it do
-    expect(Autosign::Validator.validation_order(['jwt_token'])).to eq [Autosign::Validators::JWT]                                           
+    expect(Autosign::Validator.validation_order(config_obj.settings, ['jwt_token'])).to eq [Autosign::Validators::JWT]                                           
   end
 
   context 'reduced list of validators' do
