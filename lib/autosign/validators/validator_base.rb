@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'logging'
-require 'require_all'
 
 module Autosign
   module Validators
