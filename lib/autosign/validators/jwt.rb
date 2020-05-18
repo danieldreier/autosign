@@ -23,7 +23,7 @@ module Autosign
       # @param raw_csr [String] Raw CSR; not used in this validator.
       # @return [True, False] returns true to indicate successful validation, and false to indicate failure to validate
       def perform_validation(token, certname, _raw_csr)
-        @log.info 'attempting to validate JWT token'
+        @log.info "attempting to validate with #{name}"
         unless Autosign::Token.validate(certname, token, settings['secret'])
           return false
         end
@@ -95,7 +95,7 @@ module Autosign
       def validate_settings(settings)
         @log.debug 'validating settings: ' + settings.to_s
         if settings['secret'].is_a?(String)
-          @log.info 'validated settings successfully'
+          @log.info "validated settings successfully for #{name}"
           true
         else
           @log.error 'no secret setting found'

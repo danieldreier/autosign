@@ -55,7 +55,6 @@ module Autosign
       # Do not override or use this class in child classes. This is the class that gets called
       # on validator objects.
       def validate(challenge_password, certname, raw_csr)
-        @log.debug "attempting to validate using #{name}"
         raise unless challenge_password.is_a?(String)
         raise unless certname.is_a?(String)
   
@@ -91,7 +90,7 @@ module Autosign
         true
       end
 
-      # provide a merged settings hash of default settings for a validator,
+    # provide a merged settings hash of default settings for a validator,
     # config file settings for the validator, and override settings defined in
     # the validator.
     #
@@ -102,18 +101,21 @@ module Autosign
     #
     # @return [Hash] of config settings
     def settings
-      @log.debug "merging settings for #{name} validator"
-      setting_sources = [get_override_settings, load_config, default_settings]
-      merged_settings = setting_sources.inject({}) { |merged, hash| merged.deep_merge(hash, {:overwrite_arrays => true}) }
-      @log.debug 'using merged settings: ' + merged_settings.to_s
-      @log.debug 'validating merged settings'
-      if validate_settings(merged_settings)
-        @log.debug 'successfully validated merged settings'
+      @settings ||= begin
+        @log.debug "merging settings for #{name} validator"
+        setting_sources = [get_override_settings, load_config, default_settings]
+        merged_settings = setting_sources.inject({}) { |merged, hash| merged.deep_merge(hash, {:overwrite_arrays => true}) }
+        @log.debug 'using merged settings: ' + merged_settings.to_s
+        @log.debug 'validating merged settings'
+        if validate_settings(merged_settings)
+          @log.debug 'successfully validated merged settings'
+          merged_settings
+        else
+          @log.warn 'validation of merged settings failed'
+          @log.warn "unable to validate settings in #{name} validator"
+          raise 'settings validation error'
+        end
         merged_settings
-      else
-        @log.warn 'validation of merged settings failed'
-        @log.warn "unable to validate settings in #{name} validator"
-        raise 'settings validation error'
       end
     end
 
