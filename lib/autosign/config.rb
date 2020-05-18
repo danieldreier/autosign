@@ -169,7 +169,10 @@ module Autosign
       config = {
         'general' => {
           'loglevel' => 'warn',
-          'logfile' => os_defaults['logpath']
+          'logfile' => os_defaults['logpath'],
+          'validation_order' => %w[
+            jwt_token password_list multiplexer
+          ]
         },
         'jwt_token' => {
           'secret' => SecureRandom.base64(20),
