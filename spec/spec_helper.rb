@@ -2,7 +2,10 @@
 require_relative "../lib/autosign"
 require 'coveralls'
 Coveralls.wear!
-@fixture_path = File.expand_path(File.join(__FILE__, '..', 'fixtures'))
+
+def fixtures_dir
+  @fixtures_dir = File.expand_path(File.join(__dir__, 'fixtures'))
+end
 
 # Generate X509 CSR (certificate signing request) with SAN (Subject Alternative Name) extension and sign it with the RSA key
 # common_name, organization, country, state_name, locality, _domain_list = []

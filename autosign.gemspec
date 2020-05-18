@@ -29,7 +29,7 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency('rspec', '~> 3')
   s.add_development_dependency('rubocop', '~> 0.83.0')
   s.add_development_dependency('yard', '~> 0.9.11')
-  s.add_runtime_dependency('deep_merge', '~> 1')
+  s.add_runtime_dependency('deep_merge', '~> 1.2')
   s.add_runtime_dependency('gli', '~> 2')
   s.add_runtime_dependency('iniparse', '~> 1')
   s.add_runtime_dependency('jwt', '~> 1')

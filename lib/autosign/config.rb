@@ -50,6 +50,7 @@ module Autosign
       unless ENV['HOME'].nil?
         @config_file_paths << File.join(Dir.home, '.autosign.conf')
       end
+
       unless settings_param['config_file'].nil?
         @config_file_paths = [settings_param['config_file']]
       end
@@ -65,7 +66,7 @@ module Autosign
     def settings
       @log.debug 'merging settings'
       setting_sources = [default_settings, configfile, @settings]
-      merged_settings = setting_sources.inject({}) { |merged, hash| merged.deep_merge!(hash) }
+      merged_settings = setting_sources.inject({}) { |merged, hash| merged.deep_merge!(hash, {:overwrite_arrays => true}) }
       @log.debug 'using merged settings: ' + merged_settings.to_s
       merged_settings
     end

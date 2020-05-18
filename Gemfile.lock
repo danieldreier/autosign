@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     autosign (0.1.4)
-      deep_merge (~> 1)
+      deep_merge (~> 1.2)
       gli (~> 2)
       iniparse (~> 1)
       jwt (~> 1)
