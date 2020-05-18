@@ -10,13 +10,15 @@ spec = Gem::Specification.new do |s|
   s.homepage = 'https://github.com/danieldreier/autosign'
   s.platform = Gem::Platform::RUBY
   s.summary = 'Tooling to make puppet autosigning easy, secure, and extensible'
-  s.files = `git ls-files`.split("\n")
+  s.files   = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(spec|features|fixtures)/}) }
   s.require_paths << 'lib'
-  s.has_rdoc = false
-  s.rdoc_options << '--title' << 'autosign' << '--main' << 'README.rdoc' << '-ri'
+  s.extra_rdoc_files = [
+    'CHANGELOG.md',
+    'LICENSE',
+    'README.md'
+  ]
   s.bindir = 'bin'
-  s.executables << 'autosign'
-  s.executables << 'autosign-validator'
+  s.executables = ['autosign', 'autosign-validator']
   s.add_development_dependency('aruba', '~> 0.6')
   s.add_development_dependency('coveralls')
   s.add_development_dependency('cucumber', '~> 2')

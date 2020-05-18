@@ -1,0 +1,1 @@
+# Augosign gem changelog
