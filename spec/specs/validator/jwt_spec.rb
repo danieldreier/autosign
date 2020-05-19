@@ -1,9 +1,9 @@
 require 'spec_helper'
 require 'securerandom'
-require 'autosign/validators/jwt'
-context Autosign::Validators::JWT do
+require 'autosign/validator/jwt'
+context Autosign::Validator::JWT do
   let(:certname)  { 'host.example.com' }
-  let(:validator) { Autosign::Validators::JWT.new }
+  let(:validator) { Autosign::Validator::JWT.new }
 
   let(:one_time_token) { Autosign::Token.new('foo.example.com', false, 3600, 'rspec_test', 'secret').sign }
   let(:reusable_token) { Autosign::Token.new('foo.example.com',  true, 3600, 'rspec_test', 'secret').sign }
@@ -28,7 +28,7 @@ context Autosign::Validators::JWT do
   context 'class methods' do
     describe '.new' do
       it 'requires no parameters' do
-        expect { Autosign::Validators::JWT.new }.to_not raise_error
+        expect { Autosign::Validator::JWT.new }.to_not raise_error
       end
     end
   end

@@ -3,19 +3,19 @@
 require 'logging'
 
 module Autosign
-  module Validators
-    # Parent class for validation backends. Validators take the
+  module Validator
+    # Parent class for validation backends. Validator take the
     # challenge_password and common name from a certificate signing request,
     # and perform some action to determine whether the request is valid.
     #
-    # Validators also get the raw X509 CSR in case the extracted information
+    # Validator also get the raw X509 CSR in case the extracted information
     # is insufficient for future, more powerful validators.
     #
     # All validators must inherit from this class, and must override several
     # methods in order to function. At a minimum, the name and perform_validation
     # methods must be implemented by child classes.
     #
-    # @return Autosign::Validators::ValidatorBase instance of the Autosign::Validators::ValidatorBase class
+    # @return Autosign::Validator::ValidatorBase instance of the Autosign::Validator::ValidatorBase class
     class ValidatorBase
       NAME = 'base'
       attr_reader :config_file_settings

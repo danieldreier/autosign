@@ -1,9 +1,9 @@
 require 'spec_helper'
 require 'securerandom'
-require 'autosign/validators/passwordlist'
-context Autosign::Validators::Passwordlist do
+require 'autosign/validator/passwordlist'
+context Autosign::Validator::Passwordlist do
   let(:certname)  { 'host.example.com' }
-  let(:validator) { Autosign::Validators::Passwordlist.new }
+  let(:validator) { Autosign::Validator::Passwordlist.new }
 
   before {
     # stub configuration
@@ -21,7 +21,7 @@ context Autosign::Validators::Passwordlist do
   context 'class methods' do
     describe '.new' do
       it 'requires no parameters' do
-        expect { Autosign::Validators::Passwordlist.new }.to_not raise_error
+        expect { Autosign::Validator::Passwordlist.new }.to_not raise_error
       end
     end
   end

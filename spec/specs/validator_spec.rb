@@ -50,7 +50,7 @@ describe Autosign::Validator do
   it 'decendents does not include base validator' do
     # the load order will be random at times so we need to sort in order validate we have the right classes
     expect(Autosign::Validator.validator_classes.map(&:to_s).sort)
-    .to eq(["Autosign::Validators::JWT", "Autosign::Validators::Multiplexer", "Autosign::Validators::Passwordlist"])
+    .to eq(["Autosign::Validator::JWT", "Autosign::Validator::Multiplexer", "Autosign::Validator::Passwordlist"])
   end
 
   it 'token is not reusable' do
@@ -59,12 +59,12 @@ describe Autosign::Validator do
   end
 
   it do
-    expect(Autosign::Validator.validation_order).to eq [Autosign::Validators::JWT,
-                                                  Autosign::Validators::Multiplexer, Autosign::Validators::Passwordlist]
+    expect(Autosign::Validator.validation_order).to eq [Autosign::Validator::JWT,
+                                                  Autosign::Validator::Multiplexer, Autosign::Validator::Passwordlist]
   end
 
   it do
-    expect(Autosign::Validator.validation_order(config_obj.settings, ['jwt_token'])).to eq [Autosign::Validators::JWT]                                           
+    expect(Autosign::Validator.validation_order(config_obj.settings, ['jwt_token'])).to eq [Autosign::Validator::JWT]                                           
   end
 
   context 'reduced list of validators' do
@@ -75,8 +75,8 @@ describe Autosign::Validator do
     end
 
     it do
-      expect(Autosign::Validator.validation_order).to eq [Autosign::Validators::JWT,
-                                                    Autosign::Validators::Passwordlist]
+      expect(Autosign::Validator.validation_order).to eq [Autosign::Validator::JWT,
+                                                    Autosign::Validator::Passwordlist]
     end
   end
 
@@ -88,7 +88,7 @@ describe Autosign::Validator do
     end
 
     it do
-      expect(Autosign::Validator.validation_order).to eq [Autosign::Validators::Passwordlist]
+      expect(Autosign::Validator.validation_order).to eq [Autosign::Validator::Passwordlist]
     end
   end
 end

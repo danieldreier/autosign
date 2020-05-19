@@ -51,8 +51,8 @@ module Autosign
     # this directly.
     # @return [Array] of classes inheriting from Autosign::Validator
     def self.validator_classes
-      validators = Dir.glob(File.join(__dir__, 'validators', '*')).sort.each {|k| require k }
-      ObjectSpace.each_object(Class).select { |klass| klass < Autosign::Validators::ValidatorBase }
+      validators = Dir.glob(File.join(__dir__, 'validator', '*')).sort.each {|k| require k }
+      ObjectSpace.each_object(Class).select { |klass| klass < Autosign::Validator::ValidatorBase }
     end
   end
 end
