@@ -52,8 +52,9 @@ command :generate do |c|
 
   c.action do |global_options,options,args|
     config = Autosign::Config.new({'config_file' => global_options['config']})
-    global_options['secret'] = config.settings['jwt_token']['secret'] if global_options['secret'].nil?
-    options['validfor'] = config.settings.to_hash['jwt_token']['validity'].to_s if options['validfor'] == '7200'
+    config_settings = config.settings
+    global_options['secret'] = config_settings['jwt_token']['secret'] if global_options['secret'].nil?
+    options['validfor'] = config_settings.to_hash['jwt_token']['validity'].to_s if options['validfor'] == '7200'
     @logger.debug "validfor: " + options['validfor']
     help_now!('no secret was defined via --secret or a config file') if global_options['secret'].nil?
     help_now!('certname is required as argument') if args[0].nil?
@@ -87,8 +88,9 @@ command :validate do |c|
 
   c.action do |global_options,options,args|
     config = Autosign::Config.new({'config_file' => global_options['config']})
-    puts config.settings.to_hash['jwt_token']
-    global_options['secret'] = config.settings['jwt_token']['secret'] if global_options['secret'].nil?
+    config_settings = config.settings
+    puts config_settings.to_hash['jwt_token']
+    global_options['secret'] = config_settings['jwt_token']['secret'] if global_options['secret'].nil?
 
     help_now!('no secret was defined via --secret or a config file') if global_options['secret'].nil?
     help_now!('certname is required') if options['certname'].nil?
@@ -122,7 +124,8 @@ command :config do |c|
     print.action do |global_options,options,args|
       @logger.debug "print command ran with #{global_options} #{options} #{args}"
       config = Autosign::Config.new({'config_file' => global_options['config']})
-      puts config.settings.to_s
+      require 'yaml'
+      puts config.settings.to_yaml
     end
   end
 
@@ -135,7 +138,8 @@ pre do |global,command,options,args|
   # Use skips_pre before a command to skip this block
   # on that command only
   config = Autosign::Config.new
-  @logger.level = config.settings.to_hash['general']['loglevel'].to_sym unless config.settings.to_hash['general']['loglevel'].nil?
+  config_settings = config.settings
+  @logger.level = config_settings.to_hash['general']['loglevel'].to_sym unless config_settings.to_hash['general']['loglevel'].nil?
 
   @logger.level = :error if global['quiet']
   @logger.level = :info if global['verbose']

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
-
+require 'autosign/validator/validator_base'
 module Autosign
-  module Validators
+  module Validator
     # Validate certificate signing requests using a simple password list.
     # This is not a very secure or flexible validation scheme, but is provided
     # because so many existing autosign policy scripts implement it.
@@ -13,7 +13,7 @@ module Autosign
     #   password = opensesame
     #   password = CPE1704TKS
     #
-    class Passwordlist < Autosign::Validator
+    class Passwordlist < Autosign::Validator::ValidatorBase
       NAME = 'password_list'
 
       private

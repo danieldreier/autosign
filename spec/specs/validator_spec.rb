@@ -4,6 +4,12 @@ require 'spec_helper'
 require 'securerandom'
 
 describe Autosign::Validator do
+
+  let(:config_obj) { Autosign::Config.new(settings) }
+  let(:settings) do
+    {'config_file' => File.join(fixtures_dir, 'settings_file.yaml') }
+  end
+
   let(:certname) { 'foo.example.com' }
   let(:one_time_token) { Autosign::Token.new(certname, false, 3600, 'rspec_test', 'secret').sign }
   let(:reusable_token) { Autosign::Token.new(certname,  true, 3600, 'rspec_test', 'secret').sign }
@@ -41,18 +47,24 @@ describe Autosign::Validator do
     allow_any_instance_of(Autosign::Config).to receive(:settings).and_return(config)
   end
 
+  it 'decendents does not include base validator' do
+    # the load order will be random at times so we need to sort in order validate we have the right classes
+    expect(Autosign::Validator.validator_classes.map(&:to_s).sort)
+    .to eq(["Autosign::Validator::JWT", "Autosign::Validator::Multiplexer", "Autosign::Validator::Passwordlist"])
+  end
+
   it 'token is not reusable' do
     expect(Autosign::Validator.any_validator(one_time_token, certname, csr)).to be true
     expect(Autosign::Validator.any_validator(one_time_token, certname, csr)).to be false
   end
 
   it do
-    expect(Autosign::Validator.validators).to eq [Autosign::Validators::JWT,
-                                                  Autosign::Validators::Multiplexer, Autosign::Validators::Passwordlist]
+    expect(Autosign::Validator.validation_order).to eq [Autosign::Validator::JWT,
+                                                  Autosign::Validator::Multiplexer, Autosign::Validator::Passwordlist]
   end
 
   it do
-    expect(Autosign::Validator.validators(['jwt_token'])).to eq [Autosign::Validators::JWT]                                           
+    expect(Autosign::Validator.validation_order(config_obj.settings, ['jwt_token'])).to eq [Autosign::Validator::JWT]                                           
   end
 
   context 'reduced list of validators' do
@@ -63,8 +75,8 @@ describe Autosign::Validator do
     end
 
     it do
-      expect(Autosign::Validator.validators).to eq [Autosign::Validators::JWT,
-                                                    Autosign::Validators::Passwordlist]
+      expect(Autosign::Validator.validation_order).to eq [Autosign::Validator::JWT,
+                                                    Autosign::Validator::Passwordlist]
     end
   end
 
@@ -76,7 +88,7 @@ describe Autosign::Validator do
     end
 
     it do
-      expect(Autosign::Validator.validators).to eq [Autosign::Validators::Passwordlist]
+      expect(Autosign::Validator.validation_order).to eq [Autosign::Validator::Passwordlist]
     end
   end
 end

@@ -1,14 +1,15 @@
 # frozen_string_literal: true
+require 'autosign/validator/validator_base'
 
 module Autosign
-  module Validators
+  module Validator
     # Validate certificate signing requests using JSON Web Tokens (JWT).
     # This is the expected primary validator when using the autosign gem.
     # Validation requires that the shared secret used to generate the JWT is
     # the same as on the validating system. The validator also checks that the
     # token has not expired, and that one-time (non-reusable) tokens have not
     # been previously used.
-    class JWT < Autosign::Validator
+    class JWT < Autosign::Validator::ValidatorBase
       NAME = 'jwt_token'
 
       private
@@ -22,7 +23,7 @@ module Autosign
       # @param raw_csr [String] Raw CSR; not used in this validator.
       # @return [True, False] returns true to indicate successful validation, and false to indicate failure to validate
       def perform_validation(token, certname, _raw_csr)
-        @log.info 'attempting to validate JWT token'
+        @log.info "attempting to validate with #{name}"
         unless Autosign::Token.validate(certname, token, settings['secret'])
           return false
         end
@@ -94,7 +95,7 @@ module Autosign
       def validate_settings(settings)
         @log.debug 'validating settings: ' + settings.to_s
         if settings['secret'].is_a?(String)
-          @log.info 'validated settings successfully'
+          @log.info "validated settings successfully for #{name}"
           true
         else
           @log.error 'no secret setting found'

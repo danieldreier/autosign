@@ -1,0 +1,12 @@
+---
+  general:
+    loglevel: INFO
+    logfile: "/var/log/puppetlabs/puppetserver/autosign.log"
+    validation_order:
+      - jwt_token
+  jwt_token:
+    validity: '7200'
+    journalfile: "/opt/puppetlabs/server/autosign/autosign.journal"
+    secret: hunter2
+  multiplexer:
+    external_policy_executable: "/etc/legacy_autosign/autosign.py"
