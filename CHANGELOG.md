@@ -1,6 +1,10 @@
 # Augosign changelog
 
 ## Unreleased
+
+## 1.0.0
+Released May 19, 2020 
+
 * (maint) print config in yaml format
 * (maint) Fix a cache bug where the settings were loaded multiple times
 * (maint) Fix a bug where the config overwrites settings

@@ -90,7 +90,7 @@ By default the validation runs the following validators in order:
 
 The first validator to succeed wins and short circuits the validaiton process.
 
-You can completely customize the list and how they are ordered via the configuration file.
+You can completely customize the list and how they are ordered via the configuration file.  Or even remove some entirely.
 
 ```
 ---
@@ -116,6 +116,8 @@ be important if you wanted to only use special validators or remove unwanted val
 Please note, the name of the validator which is speficed by the `NAME` constant in the validator code must match
 the list you specify otherwise it will not be part of the validation process.
 
+**NOTE** To use this feature you must have deep_merge 1.2.1+ installed which is now a requirement of this gem.
+
 ### Troubleshooting
 If you're having problems, try the following:
 
@@ -124,6 +126,7 @@ If you're having problems, try the following:
 - you can manually trigger the autosigning script with something like `cat the_csr.csr | autosign-validator certname.example.com`
 - If you run the puppet master foregrounded, you'll see quite a bit of autosign script output if autosign loglevel is set to debug.
 
+Starting with the 1.0.0 release the autosign gem requires ruby 2.4.  If you can't upgrade just yet you can continue to use the older 0.1.4 release.
 
 ### Further Reading
 
