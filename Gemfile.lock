@@ -72,7 +72,7 @@ GEM
       hiera (~> 1.0)
       json_pure
     rainbow (3.0.0)
-    rake (10.5.0)
+    rake (13.0.1)
     rdoc (4.3.0)
     rexml (3.2.4)
     rspec (3.9.0)
@@ -118,7 +118,7 @@ DEPENDENCIES
   cucumber (~> 2)
   pry (~> 0.10)
   puppet (~> 3)
-  rake (~> 10)
+  rake (~> 13)
   rdoc (~> 4)
   rspec (~> 3)
   rubocop (~> 0.83.0)
