@@ -24,7 +24,7 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency('cucumber', '~> 2')
   s.add_development_dependency('pry', '~> 0.10')
   s.add_development_dependency('puppet', '~> 3')
-  s.add_development_dependency('rake', '~> 10')
+  s.add_development_dependency('rake', '~> 13')
   s.add_development_dependency('rdoc', '~> 4')
   s.add_development_dependency('rspec', '~> 3')
   s.add_development_dependency('rubocop', '~> 0.83.0')
