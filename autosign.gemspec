@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Ensure we require the local version and not one we might have installed already
-require File.join([File.dirname(__FILE__), 'lib', 'autosign', 'version.rb'])
+require File.join([__dir__, 'lib', 'autosign', 'version.rb'])
 spec = Gem::Specification.new do |s|
   s.name = 'autosign'
   s.version = Autosign::VERSION
@@ -11,6 +11,7 @@ spec = Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.summary = 'Tooling to make puppet autosigning easy, secure, and extensible'
   s.files   = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(spec|features|fixtures)/}) }
+  s.required_ruby_version = '>= 2.4'
   s.require_paths << 'lib'
   s.extra_rdoc_files = [
     'CHANGELOG.md',
@@ -23,12 +24,13 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency('coveralls')
   s.add_development_dependency('cucumber', '~> 2')
   s.add_development_dependency('pry', '~> 0.10')
-  s.add_development_dependency('puppet', '~> 3')
+  s.add_development_dependency('puppet', '~> 6')
   s.add_development_dependency('rake', '~> 13')
   s.add_development_dependency('rdoc', '~> 4')
   s.add_development_dependency('rspec', '~> 3')
   s.add_development_dependency('rubocop', '~> 0.83.0')
   s.add_development_dependency('yard', '~> 0.9.11')
+  s.add_development_dependency('bundler', '~> 2.0')
   s.add_runtime_dependency('deep_merge', '~> 1.2')
   s.add_runtime_dependency('gli', '~> 2')
   s.add_runtime_dependency('iniparse', '~> 1')

@@ -1,26 +1,26 @@
+# encoding: utf-8
+# frozen_string_literal: true
+
 require 'rubygems'
-begin
-  require 'rspec/core/rake_task'
-  require 'cucumber'
-  require 'cucumber/rake/task'
-  require 'rdoc/task'
-  RSpec::Core::RakeTask.new(:spec) do |t|
-    t.rspec_opts = '--format documentation'
-  end
-rescue LoadError
-end
+require 'bundler'
+require 'bundler/gem_tasks'
+require 'rake/testtask'
+require 'rspec/core/rake_task'
+require 'cucumber'
+require 'cucumber/rake/task'
+require 'rdoc/task'
 require 'rake/clean'
-require 'rubygems/package_task'
+
+RSpec::Core::RakeTask.new(:spec) do |t|
+  t.rspec_opts = '--format documentation'
+end
+
 Rake::RDocTask.new do |rd|
   rd.main = 'README.rdoc'
   rd.rdoc_files.include('README.rdoc', 'lib/**/*.rb', 'bin/**/*')
-  rd.title = 'Your application title'
+  rd.title = 'Autosign'
 end
 
-spec = eval(File.read('autosign.gemspec'))
-
-Gem::PackageTask.new(spec) do |pkg|
-end
 CUKE_RESULTS = 'results.html'.freeze
 CLEAN << CUKE_RESULTS
 desc 'Run features'
