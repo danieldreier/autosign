@@ -11,7 +11,6 @@ spec = Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.summary = 'Tooling to make puppet autosigning easy, secure, and extensible'
   s.files   = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(spec|features|fixtures)/}) }
-  s.required_ruby_version = '>= 2.4'
   s.require_paths << 'lib'
   s.extra_rdoc_files = [
     'CHANGELOG.md',
