@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 1.0.1
+* (maint) Remove gem dependency on 2.4
+
 ## 1.0.0
 Released May 19, 2020 
 
