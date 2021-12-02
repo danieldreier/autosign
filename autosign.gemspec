@@ -23,7 +23,7 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency('coveralls')
   s.add_development_dependency('cucumber', '~> 2')
   s.add_development_dependency('pry', '~> 0.10')
-  s.add_development_dependency('puppet', '~> 6')
+  s.add_development_dependency('puppet', '~> 7')
   s.add_development_dependency('rake', '~> 13')
   s.add_development_dependency('rdoc', '~> 4')
   s.add_development_dependency('rspec', '~> 3')
