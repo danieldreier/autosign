@@ -86,7 +86,7 @@ GEM
       hocon (>= 1.0)
     rainbow (3.0.0)
     rake (13.0.1)
-    rdoc (6.3.2)
+    rdoc (6.3.4.1)
     rexml (3.2.5)
     rspec (3.9.0)
       rspec-core (~> 3.9.0)
