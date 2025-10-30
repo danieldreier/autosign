@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'autosign/validator/validator_base'
+require 'English'
 
 module Autosign
   module Validator
