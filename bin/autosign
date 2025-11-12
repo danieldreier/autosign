@@ -6,7 +6,7 @@ include GLI::App
 require 'logging'
 
 @logger = Logging.logger['Autosign']
-@logger.level = :warn
+@logger.level = ENV['LOGLEVEL'] || :warn
 
 program_desc 'Easy Puppet Certificate Autosigning'
 

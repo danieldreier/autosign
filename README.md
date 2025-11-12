@@ -126,6 +126,28 @@ If you're having problems, try the following:
 - you can manually trigger the autosigning script with something like `cat the_csr.csr | autosign-validator certname.example.com`
 - If you run the puppet master foregrounded, you'll see quite a bit of autosign script output if autosign loglevel is set to debug.
 
+#### Inspecting JWT expiration
+Autosign tokens are JSON Web Tokens. You can paste one into [`jwt.io`](https://www.jwt.io) to see the decoded payload and confirm the `exp` claim that controls expiration.
+
+Prefer staying on the command line? Decode the payload locally and read the `exp` timestamp (seconds since the UNIX epoch):
+
+```shell
+token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJkYXRhIjoie1wiY2VydG5hbWVcIjpcImZvby5leGFtcGxlLmNvbVwiLFwicmVxdWVzdGVyXCI6XCJEYW5pZWxzLU1hY0Jvb2stUHJvLTIubG9jYWxcIixcInJldXNhYmxlXCI6ZmFsc2UsXCJ2YWxpZGZvclwiOjI5OTk5OTk5OSxcInV1aWRcIjpcIjlkYTA0Yzc4LWQ5NjUtNDk2OC04MWNjLWVhM2RjZDllZjVjMFwifSIsImV4cCI6IjE3MzY0NjYxMzAifQ.PJwY8rIunVyWi_lw0ypFclME0jx3Vd9xJIQSyhN3VUmul3V8u4Tp9XwDgoAu9DVV0-WEG2Tfxs6F8R6Fn71Ndg"
+ruby -rjson -rbase64 -e '
+  payload = ARGV.first.split(".")[1]
+  padding = "=" * ((4 - payload.length % 4) % 4)
+  decoded = Base64.urlsafe_decode64(payload + padding)
+  data = JSON.parse(decoded)
+  if data["exp"]
+    require "time"
+    data["exp_readable"] = Time.at(data["exp"].to_i).utc.iso8601
+  end
+  puts JSON.pretty_generate(data)
+' "$token"
+```
+
+The printed JSON includes the `exp` field and an `exp_readable` value you can copy directly.
+
 Starting with the 1.0.0 release the autosign gem requires ruby 2.4.  If you can't upgrade just yet you can continue to use the older 0.1.4 release.
 
 ### Further Reading

@@ -11,12 +11,12 @@ Feature: Validate autosign key
       | AUTOSIGN_TEST_LOGLEVEL | info   |
       | AUTOSIGN_TEST_JOURNALFILE | /tmp/autosign_journal |
     When I run `rm -f /tmp/autosign_journal`
-     And I run `autosign-validator i-7672fe81` interactively
-     And I pipe in the file "../../fixtures/i-7672fe81.pem"
+     And I run `autosign-validator foo.example.com` interactively
+     And I pipe in the file "../../fixtures/foo.example.com.csr.pem"
     Then the output should contain "token validated successfully"
     Then the exit status should be 0
 
   Scenario: Do not validate a certificate signing request whose certname does not match the certificate
     When I run `autosign-validator wrong-certname.example.com` interactively
-     And I pipe in the file "../../fixtures/i-7672fe81.pem"
+     And I pipe in the file "../../fixtures/foo.example.com.csr.pem"
     Then the exit status should be 1
