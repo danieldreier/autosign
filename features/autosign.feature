@@ -62,7 +62,7 @@ Feature: Generate autosign key
         secret: 'secret'
       """
     When I run `chmod 600 autosign.conf`
-    When I run `autosign --config autosign.conf validate --certname "foo.example.com" "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJkYXRhIjoie1wiY2VydG5hbWVcIjpcImZvby5leGFtcGxlLmNvbVwiLFwicmVxdWVzdGVyXCI6XCJEYW5pZWxzLU1hY0Jvb2stUHJvLTIubG9jYWxcIixcInJldXNhYmxlXCI6ZmFsc2UsXCJ2YWxpZGZvclwiOjI5OTk5OTk5OSxcInV1aWRcIjpcIjlkYTA0Yzc4LWQ5NjUtNDk2OC04MWNjLWVhM2RjZDllZjVjMFwifSIsImV4cCI6IjE3MzY0NjYxMzAifQ.PJwY8rIunVyWi_lw0ypFclME0jx3Vd9xJIQSyhN3VUmul3V8u4Tp9XwDgoAu9DVV0-WEG2Tfxs6F8R6Fn71Ndg"`
+    When I run `autosign --config autosign.conf validate --certname "foo.example.com" "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJkYXRhIjoie1wiY2VydG5hbWVcIjpcImZvby5leGFtcGxlLmNvbVwiLFwicmVxdWVzdGVyXCI6XCI0MzFkZGI3NjlkZDNcIixcInJldXNhYmxlXCI6dHJ1ZSxcInZhbGlkZm9yXCI6MzE1NTMyODAwLFwidXVpZFwiOlwiZGMyNWMzNzctNzFmNC00MjdkLWE3OWItNDNiZjVhODA5OGMyXCJ9IiwiZXhwIjoiMjA3ODQ0MDgzNCJ9.jnOsrHaHht47YKU1ixmiuX8LjvvPumX05En3deKg4A9z4UZJFDbXPNGcb2QeVw8fvpqUK0c-aotLvtnXZIvYGw"`
     Then the output should contain "token validated successfully"
      And the exit status should be 0
 

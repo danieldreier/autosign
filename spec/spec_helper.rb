@@ -1,7 +1,8 @@
 
 require_relative "../lib/autosign"
-require 'coveralls'
-Coveralls.wear!
+#
+# require 'coveralls'
+# Coveralls.wear!
 
 def fixtures_dir
   @fixtures_dir = File.expand_path(File.join(__dir__, 'fixtures'))
@@ -37,11 +38,11 @@ def generate_csr(opts)
   csr.version = 0
   csr.subject = subject
   csr.public_key = signing_key.public_key
-  
+
   if opts[:csr_attributes]
     opts[:csr_attributes].each do |oid, value|
       encoded = OpenSSL::ASN1::PrintableString.new(value.to_s)
-  
+
       attr_set = OpenSSL::ASN1::Set.new([encoded])
       csr.add_attribute(OpenSSL::X509::Attribute.new(oid, attr_set))
     end

@@ -63,6 +63,9 @@ module Autosign
       begin
         @log.debug "Decoding and parsing token"
         data = MultiJson.load(JWT.decode(token, hmac_secret)[0]["data"])
+      rescue JWT::VerificationError => e
+        @log.error "VerificationError: #{e.message}"
+        errors << e.message
       rescue JWT::ExpiredSignature
         @log.warn "Token has an expired signature"
         errors << "Expired Signature"
